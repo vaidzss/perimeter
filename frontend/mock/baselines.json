@@ -1,0 +1,1882 @@
+{
+  "api-01": [
+    {
+      "api_id": "api-01",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 142,
+        "anomaly": true
+      }
+    },
+    {
+      "api_id": "api-01",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-01",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-01",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-02": [
+    {
+      "api_id": "api-02",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-02",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-02",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-02",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-03": [
+    {
+      "api_id": "api-03",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-03",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-03",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 48,
+        "anomaly": true
+      }
+    },
+    {
+      "api_id": "api-03",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-04": [
+    {
+      "api_id": "api-04",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-04",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-04",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-04",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-05": [
+    {
+      "api_id": "api-05",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-05",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-05",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-05",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-06": [
+    {
+      "api_id": "api-06",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 142,
+        "anomaly": true
+      }
+    },
+    {
+      "api_id": "api-06",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-06",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-06",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-07": [
+    {
+      "api_id": "api-07",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-07",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-07",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-07",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-08": [
+    {
+      "api_id": "api-08",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-08",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-08",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-08",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-09": [
+    {
+      "api_id": "api-09",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-09",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-09",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-09",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-10": [
+    {
+      "api_id": "api-10",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-10",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-10",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-10",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-11": [
+    {
+      "api_id": "api-11",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-11",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-11",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-11",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-12": [
+    {
+      "api_id": "api-12",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-12",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-12",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-12",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-13": [
+    {
+      "api_id": "api-13",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-13",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-13",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-13",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-14": [
+    {
+      "api_id": "api-14",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-14",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-14",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-14",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-15": [
+    {
+      "api_id": "api-15",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-15",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 28500,
+        "anomaly": true
+      }
+    },
+    {
+      "api_id": "api-15",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-15",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-16": [
+    {
+      "api_id": "api-16",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-16",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-16",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-16",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-17": [
+    {
+      "api_id": "api-17",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-17",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-17",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-17",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-18": [
+    {
+      "api_id": "api-18",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-18",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-18",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-18",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-19": [
+    {
+      "api_id": "api-19",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-19",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-19",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-19",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ],
+  "api-20": [
+    {
+      "api_id": "api-20",
+      "metric": "rate",
+      "baseline_values": {
+        "p50": 12,
+        "p95": 35,
+        "max_normal": 50
+      },
+      "live_values": {
+        "current_rate": 18,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-20",
+      "metric": "payload_size",
+      "baseline_values": {
+        "avg_bytes": 1250,
+        "p95_bytes": 2800
+      },
+      "live_values": {
+        "current_avg_bytes": 1400,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-20",
+      "metric": "unique_callers",
+      "baseline_values": {
+        "distinct_actors_per_hour": 15
+      },
+      "live_values": {
+        "distinct_actors_per_hour": 14,
+        "anomaly": false
+      }
+    },
+    {
+      "api_id": "api-20",
+      "metric": "hourly_distribution",
+      "baseline_values": [
+        10,
+        8,
+        5,
+        4,
+        3,
+        5,
+        12,
+        35,
+        60,
+        85,
+        95,
+        100,
+        98,
+        92,
+        88,
+        90,
+        85,
+        78,
+        65,
+        50,
+        42,
+        30,
+        22,
+        15
+      ],
+      "live_values": [
+        12,
+        7,
+        6,
+        4,
+        3,
+        5,
+        14,
+        38,
+        65,
+        90,
+        110,
+        125,
+        140,
+        130,
+        95,
+        92,
+        88,
+        80,
+        70,
+        55,
+        48,
+        35,
+        25,
+        18
+      ]
+    }
+  ]
+}

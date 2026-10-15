@@ -1,0 +1,92 @@
+{
+  "posture_score": 64,
+  "posture_explanation": "Posture score 64/100 computed from weighted risk average across 20 APIs, penalised by 4 shadow APIs, 1 zombie route, and 5 active critical alerts.",
+  "total_apis": 20,
+  "counts_by_status": {
+    "documented": 13,
+    "shadow": 4,
+    "zombie": 1,
+    "unmanaged": 1,
+    "unused_documented": 1
+  },
+  "alerts_by_severity": {
+    "critical": 5,
+    "high": 6,
+    "medium": 3,
+    "low": 1
+  },
+  "alerts_by_type": {
+    "BOLA": 3,
+    "token_misuse": 3,
+    "scraping": 3,
+    "brute_force": 3,
+    "unauthorized_access": 3
+  },
+  "top_risky_apis": [
+    {
+      "api_id": "api-06",
+      "method": "GET",
+      "path_template": "/internal/debug/tokens",
+      "risk_score": 98,
+      "reason_chip": "SHADOW \u2022 email"
+    },
+    {
+      "api_id": "api-07",
+      "method": "POST",
+      "path_template": "/api/v2/test/export-users",
+      "risk_score": 95,
+      "reason_chip": "SHADOW \u2022 Aadhaar, PAN"
+    },
+    {
+      "api_id": "api-10",
+      "method": "GET",
+      "path_template": "/v1/legacy/export/customers.csv",
+      "risk_score": 94,
+      "reason_chip": "ZOMBIE \u2022 Aadhaar, PAN"
+    },
+    {
+      "api_id": "api-01",
+      "method": "GET",
+      "path_template": "/accounts/{id}",
+      "risk_score": 92,
+      "reason_chip": "DOCUMENTED \u2022 PAN, Aadhaar"
+    },
+    {
+      "api_id": "api-13",
+      "method": "GET",
+      "path_template": "/cards/{id}/statement",
+      "risk_score": 89,
+      "reason_chip": "DOCUMENTED \u2022 PAN, email"
+    }
+  ],
+  "requests_over_time": [
+    {
+      "timestamp": "21:00",
+      "count": 1820
+    },
+    {
+      "timestamp": "21:15",
+      "count": 2100
+    },
+    {
+      "timestamp": "21:30",
+      "count": 2450
+    },
+    {
+      "timestamp": "21:45",
+      "count": 2980
+    },
+    {
+      "timestamp": "22:00",
+      "count": 3840
+    },
+    {
+      "timestamp": "22:15",
+      "count": 4620
+    },
+    {
+      "timestamp": "22:30",
+      "count": 4200
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bharatpay-backend
+    environment:
+      - DATABASE_URL=sqlite:////data/bharatpay.db
+      - LOG_FILE_PATH=/var/log/bharatpay/requests.jsonl
+      - JWT_SECRET=synthetic_demo_jwt_secret_cc6_ic07_bharatpay
+    volumes:
+      - app-data:/data
+      - ./logs:/var/log/bharatpay
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bharatpay-frontend
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: bharatpay-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./logs:/var/log/bharatpay
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  app-data:

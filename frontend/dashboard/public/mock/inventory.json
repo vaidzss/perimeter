@@ -1,0 +1,502 @@
+[
+  {
+    "api_id": "api-01",
+    "method": "GET",
+    "path_template": "/accounts/{id}",
+    "auth_type": "jwt",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "include_statement",
+        "in": "query",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "sensitive_types": [
+      "PAN",
+      "Aadhaar",
+      "phone",
+      "email"
+    ],
+    "status": "documented",
+    "first_seen": "2026-08-15T08:00:00Z",
+    "last_seen": "2026-10-13T22:29:45Z",
+    "request_count": 84520,
+    "exposure": "public",
+    "risk_score": 92
+  },
+  {
+    "api_id": "api-02",
+    "method": "POST",
+    "path_template": "/accounts/transfer",
+    "auth_type": "oauth2",
+    "parameters": [
+      {
+        "name": "source_acc",
+        "in": "body",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "dest_acc",
+        "in": "body",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "in": "body",
+        "type": "number",
+        "required": true
+      }
+    ],
+    "sensitive_types": [
+      "phone"
+    ],
+    "status": "documented",
+    "first_seen": "2026-08-15T08:00:00Z",
+    "last_seen": "2026-10-13T22:28:10Z",
+    "request_count": 31200,
+    "exposure": "public",
+    "risk_score": 78
+  },
+  {
+    "api_id": "api-03",
+    "method": "POST",
+    "path_template": "/auth/login",
+    "auth_type": "none",
+    "parameters": [
+      {
+        "name": "username",
+        "in": "body",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "password",
+        "in": "body",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "sensitive_types": [
+      "email"
+    ],
+    "status": "documented",
+    "first_seen": "2026-08-10T00:00:00Z",
+    "last_seen": "2026-10-13T22:30:00Z",
+    "request_count": 245000,
+    "exposure": "public",
+    "risk_score": 85
+  },
+  {
+    "api_id": "api-04",
+    "method": "GET",
+    "path_template": "/users/{id}/profile",
+    "auth_type": "jwt",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "sensitive_types": [
+      "phone",
+      "email",
+      "PAN"
+    ],
+    "status": "documented",
+    "first_seen": "2026-08-15T08:00:00Z",
+    "last_seen": "2026-10-13T22:29:12Z",
+    "request_count": 112400,
+    "exposure": "public",
+    "risk_score": 76
+  },
+  {
+    "api_id": "api-05",
+    "method": "PUT",
+    "path_template": "/users/{id}/profile",
+    "auth_type": "jwt",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "phone",
+        "in": "body",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "sensitive_types": [
+      "phone",
+      "email"
+    ],
+    "status": "documented",
+    "first_seen": "2026-08-15T08:00:00Z",
+    "last_seen": "2026-10-13T22:25:30Z",
+    "request_count": 18400,
+    "exposure": "public",
+    "risk_score": 64
+  },
+  {
+    "api_id": "api-06",
+    "method": "GET",
+    "path_template": "/internal/debug/tokens",
+    "auth_type": "none",
+    "parameters": [
+      {
+        "name": "cluster",
+        "in": "query",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "sensitive_types": [
+      "email"
+    ],
+    "status": "shadow",
+    "first_seen": "2026-10-09T14:22:00Z",
+    "last_seen": "2026-10-13T22:27:14Z",
+    "request_count": 1420,
+    "exposure": "public",
+    "risk_score": 98
+  },
+  {
+    "api_id": "api-07",
+    "method": "POST",
+    "path_template": "/api/v2/test/export-users",
+    "auth_type": "none",
+    "parameters": [
+      {
+        "name": "format",
+        "in": "query",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "sensitive_types": [
+      "Aadhaar",
+      "PAN",
+      "phone",
+      "email"
+    ],
+    "status": "shadow",
+    "first_seen": "2026-10-11T09:15:00Z",
+    "last_seen": "2026-10-13T22:18:40Z",
+    "request_count": 890,
+    "exposure": "public",
+    "risk_score": 95
+  },
+  {
+    "api_id": "api-08",
+    "method": "GET",
+    "path_template": "/admin/v1/health-dump",
+    "auth_type": "none",
+    "parameters": [],
+    "sensitive_types": [],
+    "status": "shadow",
+    "first_seen": "2026-10-12T11:00:00Z",
+    "last_seen": "2026-10-13T22:20:00Z",
+    "request_count": 640,
+    "exposure": "public",
+    "risk_score": 82
+  },
+  {
+    "api_id": "api-09",
+    "method": "POST",
+    "path_template": "/api/v1/telemetry/raw",
+    "auth_type": "api_key",
+    "parameters": [],
+    "sensitive_types": [
+      "phone"
+    ],
+    "status": "shadow",
+    "first_seen": "2026-10-10T16:40:00Z",
+    "last_seen": "2026-10-13T22:15:10Z",
+    "request_count": 2150,
+    "exposure": "internal",
+    "risk_score": 74
+  },
+  {
+    "api_id": "api-10",
+    "method": "GET",
+    "path_template": "/v1/legacy/export/customers.csv",
+    "auth_type": "basic",
+    "parameters": [
+      {
+        "name": "limit",
+        "in": "query",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "sensitive_types": [
+      "Aadhaar",
+      "PAN",
+      "phone",
+      "email"
+    ],
+    "status": "zombie",
+    "first_seen": "2024-03-01T00:00:00Z",
+    "last_seen": "2026-10-13T22:10:05Z",
+    "request_count": 520,
+    "exposure": "public",
+    "risk_score": 94
+  },
+  {
+    "api_id": "api-11",
+    "method": "POST",
+    "path_template": "/webhooks/partner-sync",
+    "auth_type": "none",
+    "parameters": [
+      {
+        "name": "partner_id",
+        "in": "query",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "sensitive_types": [
+      "PAN",
+      "phone"
+    ],
+    "status": "unmanaged",
+    "first_seen": "2026-09-01T12:00:00Z",
+    "last_seen": "2026-10-13T22:26:00Z",
+    "request_count": 9400,
+    "exposure": "public",
+    "risk_score": 88
+  },
+  {
+    "api_id": "api-12",
+    "method": "DELETE",
+    "path_template": "/admin/deprecated/tenants/{id}",
+    "auth_type": "jwt",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "sensitive_types": [],
+    "status": "unused_documented",
+    "first_seen": "2026-08-15T08:00:00Z",
+    "last_seen": "2026-08-16T10:00:00Z",
+    "request_count": 3,
+    "exposure": "internal",
+    "risk_score": 35
+  },
+  {
+    "api_id": "api-13",
+    "method": "GET",
+    "path_template": "/cards/{id}/statement",
+    "auth_type": "jwt",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "month",
+        "in": "query",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "sensitive_types": [
+      "PAN",
+      "email"
+    ],
+    "status": "documented",
+    "first_seen": "2026-08-20T08:00:00Z",
+    "last_seen": "2026-10-13T22:28:40Z",
+    "request_count": 48200,
+    "exposure": "public",
+    "risk_score": 89
+  },
+  {
+    "api_id": "api-14",
+    "method": "POST",
+    "path_template": "/kyc/verify",
+    "auth_type": "jwt",
+    "parameters": [
+      {
+        "name": "aadhaar_number",
+        "in": "body",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "pan_number",
+        "in": "body",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "sensitive_types": [
+      "Aadhaar",
+      "PAN",
+      "phone"
+    ],
+    "status": "documented",
+    "first_seen": "2026-08-20T08:00:00Z",
+    "last_seen": "2026-10-13T22:24:50Z",
+    "request_count": 22100,
+    "exposure": "public",
+    "risk_score": 81
+  },
+  {
+    "api_id": "api-15",
+    "method": "GET",
+    "path_template": "/merchants/{id}/transactions",
+    "auth_type": "api_key",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "page",
+        "in": "query",
+        "type": "integer",
+        "required": false
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "sensitive_types": [
+      "phone"
+    ],
+    "status": "documented",
+    "first_seen": "2026-08-25T08:00:00Z",
+    "last_seen": "2026-10-13T22:29:50Z",
+    "request_count": 184500,
+    "exposure": "public",
+    "risk_score": 75
+  },
+  {
+    "api_id": "api-16",
+    "method": "GET",
+    "path_template": "/loans/{id}",
+    "auth_type": "jwt",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "sensitive_types": [
+      "Aadhaar",
+      "PAN"
+    ],
+    "status": "documented",
+    "first_seen": "2026-09-01T08:00:00Z",
+    "last_seen": "2026-10-13T22:19:15Z",
+    "request_count": 14200,
+    "exposure": "public",
+    "risk_score": 72
+  },
+  {
+    "api_id": "api-17",
+    "method": "DELETE",
+    "path_template": "/subscriptions/{id}",
+    "auth_type": "jwt",
+    "parameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "sensitive_types": [
+      "email"
+    ],
+    "status": "documented",
+    "first_seen": "2026-09-05T08:00:00Z",
+    "last_seen": "2026-10-13T22:12:00Z",
+    "request_count": 5100,
+    "exposure": "public",
+    "risk_score": 48
+  },
+  {
+    "api_id": "api-18",
+    "method": "GET",
+    "path_template": "/catalog/products",
+    "auth_type": "none",
+    "parameters": [
+      {
+        "name": "category",
+        "in": "query",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "sensitive_types": [],
+    "status": "documented",
+    "first_seen": "2026-08-10T00:00:00Z",
+    "last_seen": "2026-10-13T22:29:55Z",
+    "request_count": 390000,
+    "exposure": "public",
+    "risk_score": 28
+  },
+  {
+    "api_id": "api-19",
+    "method": "GET",
+    "path_template": "/healthz",
+    "auth_type": "none",
+    "parameters": [],
+    "sensitive_types": [],
+    "status": "documented",
+    "first_seen": "2026-08-10T00:00:00Z",
+    "last_seen": "2026-10-13T22:30:00Z",
+    "request_count": 450000,
+    "exposure": "public",
+    "risk_score": 10
+  },
+  {
+    "api_id": "api-20",
+    "method": "PATCH",
+    "path_template": "/admin/config/flags",
+    "auth_type": "jwt",
+    "parameters": [
+      {
+        "name": "maintenance_mode",
+        "in": "body",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "sensitive_types": [],
+    "status": "documented",
+    "first_seen": "2026-08-15T08:00:00Z",
+    "last_seen": "2026-10-13T22:05:00Z",
+    "request_count": 920,
+    "exposure": "internal",
+    "risk_score": 62
+  }
+]

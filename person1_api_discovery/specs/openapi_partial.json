@@ -1,0 +1,233 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FinTech Core Banking API - Governed Partial Specification",
+    "description": "Enterprise OpenAPI 3.0.3 specification containing approved v2 banking APIs and deprecated v1 export. Undocumented shadow and internal debugging endpoints are excluded.",
+    "version": "2.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Production FinTech Gateway"
+    }
+  ],
+  "paths": {
+    "/api/v2/auth/login": {
+      "post": {
+        "summary": "User Authentication",
+        "description": "Authenticates user and issues signed JWT bearer token.",
+        "operationId": "login_user",
+        "tags": ["Auth"],
+        "responses": {
+          "200": { "description": "Successful login with access token" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/api/v2/auth/refresh": {
+      "post": {
+        "summary": "Refresh Access Token",
+        "description": "Issues a refreshed JWT bearer token.",
+        "operationId": "refresh_token",
+        "tags": ["Auth"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "New access token issued" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v2/users/me": {
+      "get": {
+        "summary": "Get Current User Profile",
+        "description": "Retrieves authenticated user profile.",
+        "operationId": "get_my_profile",
+        "tags": ["Users"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "User profile data" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v2/users/me/contact": {
+      "put": {
+        "summary": "Update Contact Details",
+        "description": "Updates contact telephone or email for current user.",
+        "operationId": "update_contact_details",
+        "tags": ["Users"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Contact details updated" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v2/accounts/{account_id}": {
+      "get": {
+        "summary": "Get Account Details",
+        "description": "Retrieves account balance and status.",
+        "operationId": "get_account_by_id",
+        "tags": ["Accounts"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Account details and balance" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v2/accounts/{account_id}/statements": {
+      "get": {
+        "summary": "Get Account Statements",
+        "description": "Generates account financial statement.",
+        "operationId": "get_account_statements",
+        "tags": ["Accounts"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Account statement records" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v2/accounts/beneficiaries": {
+      "post": {
+        "summary": "Add Beneficiary",
+        "description": "Registers a new beneficiary for transfers.",
+        "operationId": "add_beneficiary",
+        "tags": ["Accounts"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Beneficiary registered" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v2/accounts/{account_id}/transactions": {
+      "get": {
+        "summary": "Get Account Transactions",
+        "description": "Retrieves transaction history for specified account.",
+        "operationId": "get_account_transactions",
+        "tags": ["Transactions"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "List of transactions" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v2/transactions/{txn_id}/receipt": {
+      "get": {
+        "summary": "Get Transaction Receipt",
+        "description": "Fetches official tax invoice and payment receipt.",
+        "operationId": "get_transaction_receipt",
+        "tags": ["Transactions"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "txn_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Receipt details" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v2/payments/upi-transfer": {
+      "post": {
+        "summary": "Execute UPI Transfer",
+        "description": "Transfers funds via UPI virtual payment address.",
+        "operationId": "execute_upi_transfer",
+        "tags": ["Payments"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "UPI payment executed successfully" },
+          "400": { "description": "Insufficient funds" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v2/payments/scheduled": {
+      "get": {
+        "summary": "Get Scheduled Recurring Payments",
+        "description": "Lists scheduled recurring standing orders. Intended to demonstrate unused status.",
+        "operationId": "get_scheduled_payments",
+        "tags": ["Payments"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of scheduled recurring payments" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v2/accounts/{account_id}/close": {
+      "delete": {
+        "summary": "Close Bank Account",
+        "description": "Documented governance endpoint to close account. Receives zero traffic to verify unused detection.",
+        "operationId": "close_account_governed",
+        "tags": ["Accounts"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Account closed successfully" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/v1/users/export": {
+      "get": {
+        "summary": "Legacy User Bulk Export",
+        "description": "DEPRECATED legacy endpoint for migration export. Tagged deprecated.",
+        "operationId": "legacy_bulk_users_export",
+        "tags": ["Legacy & Export"],
+        "deprecated": true,
+        "responses": {
+          "200": { "description": "Bulk user export" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

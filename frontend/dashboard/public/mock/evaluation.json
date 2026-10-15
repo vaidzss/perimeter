@@ -1,0 +1,78 @@
+{
+  "overall": {
+    "detection_rate": 0.942,
+    "fp_rate": 0.018,
+    "precision": 0.965,
+    "f1": 0.953,
+    "mean_time_to_detect_s": 24.6
+  },
+  "per_scenario": [
+    {
+      "scenario": "BOLA / IDOR Account Harvest",
+      "recall": 0.96,
+      "detected": 48,
+      "total": 50,
+      "mean_ttd_s": 18.2
+    },
+    {
+      "scenario": "Distributed Token Misuse / Replay",
+      "recall": 0.92,
+      "detected": 46,
+      "total": 50,
+      "mean_ttd_s": 32.4
+    },
+    {
+      "scenario": "High-Volume Data Scraping",
+      "recall": 0.98,
+      "detected": 49,
+      "total": 50,
+      "mean_ttd_s": 14.5
+    },
+    {
+      "scenario": "Credential Stuffing & Brute Force",
+      "recall": 0.94,
+      "detected": 47,
+      "total": 50,
+      "mean_ttd_s": 22.0
+    },
+    {
+      "scenario": "Shadow Route Probe & BFLA",
+      "recall": 0.91,
+      "detected": 45,
+      "total": 50,
+      "mean_ttd_s": 36.0
+    }
+  ],
+  "confusion_matrix": {
+    "tp": 235,
+    "fp": 8,
+    "tn": 442,
+    "fn": 15
+  },
+  "before_after_tuning": [
+    {
+      "metric": "Detection Rate (Recall)",
+      "before": 0.812,
+      "after": 0.942
+    },
+    {
+      "metric": "False Positive Rate",
+      "before": 0.084,
+      "after": 0.018
+    },
+    {
+      "metric": "Precision",
+      "before": 0.871,
+      "after": 0.965
+    },
+    {
+      "metric": "Mean Time to Detect (s)",
+      "before": 58.4,
+      "after": 24.6
+    }
+  ],
+  "known_limitations": [
+    "Slow-and-low BOLA probes (< 1 request / 10 minutes) require a larger observation window (> 24h) to exceed anomaly thresholds.",
+    "Token sharing within corporate NAT gateways can exhibit multi-IP behavior that requires TLS JA4 fingerprinting to disambiguate from true token theft."
+  ]
+}

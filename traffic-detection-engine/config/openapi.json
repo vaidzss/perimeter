@@ -1,0 +1,80 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FinTech & DPI Banking Core API",
+    "version": "2.1.0",
+    "description": "Production FinTech banking and Digital Public Infrastructure payment APIs."
+  },
+  "servers": [
+    {
+      "url": "https://api.fintech-dpi.internal"
+    }
+  ],
+  "paths": {
+    "/api/v2/accounts/{id}/balance": {
+      "get": {
+        "summary": "Retrieve account balance",
+        "operationId": "getAccountBalance",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account balance retrieved successfully"
+          }
+        }
+      }
+    },
+    "/api/v2/users/{id}/profile": {
+      "get": {
+        "summary": "Get user profile details",
+        "operationId": "getUserProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile data"
+          }
+        }
+      }
+    },
+    "/api/v2/payments/transfer": {
+      "post": {
+        "summary": "Initiate UPI/IMPS fund transfer",
+        "operationId": "initiateTransfer",
+        "responses": {
+          "200": {
+            "description": "Transfer initiated"
+          }
+        }
+      }
+    },
+    "/api/v1/users/export-all": {
+      "get": {
+        "summary": "Legacy bulk user export (Deprecated)",
+        "operationId": "legacyExportAllUsers",
+        "deprecated": true,
+        "responses": {
+          "200": {
+            "description": "Legacy export data"
+          }
+        }
+      }
+    }
+  }
+}

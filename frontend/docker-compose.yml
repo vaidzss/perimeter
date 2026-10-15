@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  dashboard-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cc6-security-dashboard-api
+    ports:
+      - "8000:8000"
+    environment:
+      - USE_MOCK=true
+      - PORT=8000
+    volumes:
+      - ./mock:/app/mock:ro
+    restart: unless-stopped
+
+  dashboard-ui:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: cc6-security-dashboard-ui
+    ports:
+      - "3000:80"
+    depends_on:
+      - dashboard-api
+    restart: unless-stopped

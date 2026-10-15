@@ -1,0 +1,290 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FinTech DPI Core Banking Service - Official Specification",
+    "description": "Approved and governed enterprise OpenAPI 3.0 specification for FinTech Core Banking API.",
+    "version": "2.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8001",
+      "description": "Target FinTech Service Cluster"
+    },
+    {
+      "url": "http://localhost:8000",
+      "description": "SentinelAPI Protected Gateway"
+    }
+  ],
+  "paths": {
+    "/api/v2/auth/login": {
+      "post": {
+        "summary": "User Authentication",
+        "description": "Authenticate retail or commercial banking user and issue JWT bearer token.",
+        "operationId": "login_user",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/api/v2/accounts/{account_id}/balance": {
+      "get": {
+        "summary": "Get Account Balance",
+        "description": "Retrieve real-time account ledger balance for the specified account ID.",
+        "operationId": "get_account_balance",
+        "tags": ["Accounts"],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "description": "Unique identifier of the banking account",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account balance details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountBalanceResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access"
+          }
+        }
+      }
+    },
+    "/api/v2/directory/merchants": {
+      "get": {
+        "summary": "Directory of Registered Merchants",
+        "description": "Public directory of registered UPI & BharatQR merchants with pagination.",
+        "operationId": "list_merchants",
+        "tags": ["Directory"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated merchant listing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantDirectoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/export-all": {
+      "get": {
+        "summary": "Legacy User Bulk Export",
+        "description": "DEPRECATED legacy endpoint for migration exports. Tagged deprecated.",
+        "operationId": "export_all_users_legacy",
+        "tags": ["Legacy - Deprecated"],
+        "deprecated": true,
+        "responses": {
+          "200": {
+            "description": "List of user accounts and sensitive profile records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PIIUserExport"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "user_101"
+          },
+          "password": {
+            "type": "string",
+            "example": "password123"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "required": ["access_token", "token_type", "user"],
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string",
+            "example": "bearer"
+          },
+          "user": {
+            "type": "object"
+          }
+        }
+      },
+      "AccountBalanceResponse": {
+        "type": "object",
+        "required": ["account_id", "account_number", "account_holder", "currency", "available_balance", "ledger_balance", "account_type", "status", "branch_ifsc", "last_transaction"],
+        "properties": {
+          "account_id": {
+            "type": "string"
+          },
+          "account_number": {
+            "type": "string"
+          },
+          "account_holder": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string",
+            "example": "INR"
+          },
+          "available_balance": {
+            "type": "number",
+            "format": "float"
+          },
+          "ledger_balance": {
+            "type": "number",
+            "format": "float"
+          },
+          "account_type": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "branch_ifsc": {
+            "type": "string"
+          },
+          "last_transaction": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MerchantItem": {
+        "type": "object",
+        "required": ["merchant_id", "business_name", "category", "upi_vpa", "city", "state", "rating", "verified"],
+        "properties": {
+          "merchant_id": { "type": "string" },
+          "business_name": { "type": "string" },
+          "category": { "type": "string" },
+          "upi_vpa": { "type": "string" },
+          "city": { "type": "string" },
+          "state": { "type": "string" },
+          "rating": { "type": "number" },
+          "verified": { "type": "boolean" }
+        }
+      },
+      "MerchantDirectoryResponse": {
+        "type": "object",
+        "required": ["page", "limit", "total", "total_pages", "data"],
+        "properties": {
+          "page": { "type": "integer" },
+          "limit": { "type": "integer" },
+          "total": { "type": "integer" },
+          "total_pages": { "type": "integer" },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MerchantItem"
+            }
+          }
+        }
+      },
+      "PIIUserExport": {
+        "type": "object",
+        "required": ["user_id", "full_name", "email", "phone_number", "pan_card", "upi_vpa", "govt_id_reference", "annual_income_inr"],
+        "properties": {
+          "user_id": { "type": "string" },
+          "full_name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone_number": { "type": "string" },
+          "pan_card": { "type": "string" },
+          "upi_vpa": { "type": "string" },
+          "govt_id_reference": { "type": "string" },
+          "annual_income_inr": { "type": "number" },
+          "session_token_sample": { "type": "string" }
+        }
+      }
+    }
+  }
+}

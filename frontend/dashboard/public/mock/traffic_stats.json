@@ -1,0 +1,194 @@
+{
+  "window": "1h",
+  "requests_over_time": [
+    {
+      "timestamp": "21:30",
+      "requests_per_min": 245,
+      "error_rate": 1.2
+    },
+    {
+      "timestamp": "21:40",
+      "requests_per_min": 280,
+      "error_rate": 1.8
+    },
+    {
+      "timestamp": "21:50",
+      "requests_per_min": 310,
+      "error_rate": 2.1
+    },
+    {
+      "timestamp": "22:00",
+      "requests_per_min": 420,
+      "error_rate": 6.8
+    },
+    {
+      "timestamp": "22:10",
+      "requests_per_min": 510,
+      "error_rate": 9.4
+    },
+    {
+      "timestamp": "22:20",
+      "requests_per_min": 590,
+      "error_rate": 11.2
+    },
+    {
+      "timestamp": "22:30",
+      "requests_per_min": 520,
+      "error_rate": 8.5
+    }
+  ],
+  "error_rates": {
+    "rate_4xx": 7.4,
+    "rate_5xx": 0.8
+  },
+  "latency_percentiles": {
+    "p50": 34,
+    "p90": 88,
+    "p99": 195
+  },
+  "top_consumers": [
+    {
+      "actor": "u_17 (Tor Exit)",
+      "requests": 2140,
+      "error_rate": 2.1
+    },
+    {
+      "actor": "tok_9918ab (Distributed)",
+      "requests": 1840,
+      "error_rate": 4.5
+    },
+    {
+      "actor": "45.154.255.89 (Brute Force)",
+      "requests": 1280,
+      "error_rate": 92.4
+    },
+    {
+      "actor": "185.220.101.5 (Scraper)",
+      "requests": 940,
+      "error_rate": 0.0
+    },
+    {
+      "actor": "Legitimate Mobile App",
+      "requests": 34500,
+      "error_rate": 0.4
+    }
+  ],
+  "top_endpoints": [
+    {
+      "api": "GET /accounts/{id}",
+      "requests": 84520,
+      "error_rate": 4.2
+    },
+    {
+      "api": "POST /auth/login",
+      "requests": 245000,
+      "error_rate": 14.8
+    },
+    {
+      "api": "GET /catalog/products",
+      "requests": 390000,
+      "error_rate": 0.2
+    },
+    {
+      "api": "GET /internal/debug/tokens",
+      "requests": 1420,
+      "error_rate": 0.0
+    },
+    {
+      "api": "GET /cards/{id}/statement",
+      "requests": 48200,
+      "error_rate": 2.8
+    }
+  ],
+  "status_codes": [
+    {
+      "code": "200 OK",
+      "count": 782000,
+      "percentage": 82.5
+    },
+    {
+      "code": "201 Created",
+      "count": 64000,
+      "percentage": 6.8
+    },
+    {
+      "code": "400 Bad Request",
+      "count": 12400,
+      "percentage": 1.3
+    },
+    {
+      "code": "401 Unauthorized",
+      "count": 38200,
+      "percentage": 4.0
+    },
+    {
+      "code": "403 Forbidden",
+      "count": 31500,
+      "percentage": 3.3
+    },
+    {
+      "code": "404 Not Found",
+      "count": 9200,
+      "percentage": 1.0
+    },
+    {
+      "code": "429 Rate Limited",
+      "count": 7800,
+      "percentage": 0.8
+    },
+    {
+      "code": "500 Server Error",
+      "count": 2900,
+      "percentage": 0.3
+    }
+  ],
+  "ip_geo_breakdown": [
+    {
+      "country": "India (Domestic Mobile/Web)",
+      "ip_count": 4820,
+      "requests": 680000
+    },
+    {
+      "country": "Netherlands (Tor / Datacenter)",
+      "ip_count": 42,
+      "requests": 14200
+    },
+    {
+      "country": "Russia (Bulletproof ASN)",
+      "ip_count": 28,
+      "requests": 9400
+    },
+    {
+      "country": "United States (Cloud Scrapers)",
+      "ip_count": 115,
+      "requests": 18200
+    },
+    {
+      "country": "Germany (Exit Relays)",
+      "ip_count": 34,
+      "requests": 7600
+    }
+  ],
+  "auth_split": [
+    {
+      "auth_type": "jwt",
+      "percentage": 52.4
+    },
+    {
+      "auth_type": "none (public)",
+      "percentage": 34.2
+    },
+    {
+      "auth_type": "oauth2",
+      "percentage": 8.1
+    },
+    {
+      "auth_type": "api_key",
+      "percentage": 4.8
+    },
+    {
+      "auth_type": "basic",
+      "percentage": 0.5
+    }
+  ]
+}
