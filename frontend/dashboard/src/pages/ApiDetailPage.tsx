@@ -5,7 +5,7 @@ import { StatusTag } from '../components/common/StatusTag';
 import { MethodTag } from '../components/common/MethodTag';
 import { SeverityDot } from '../components/common/SeverityDot';
 import { RelativeTime } from '../components/common/RelativeTime';
-import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { ArrowLeft, AlertCircle, ArrowRight } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -13,7 +13,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
 
 export const ApiDetailPage: React.FC = () => {
@@ -22,13 +22,13 @@ export const ApiDetailPage: React.FC = () => {
 
   if (isLoading || !data) {
     return (
-      <div className="space-y-4 animate-pulse">
-        <div className="h-28 rounded-[6px] bg-[#15181D] border border-[#252A31]" />
+      <div className="space-y-4 animate-pulse select-none">
+        <div className="h-28 rounded-2xl bg-white border border-slate-200 shadow-xs" />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="h-28 rounded-[6px] bg-[#15181D] border border-[#252A31]" />
-          <div className="h-28 rounded-[6px] bg-[#15181D] border border-[#252A31]" />
-          <div className="h-28 rounded-[6px] bg-[#15181D] border border-[#252A31]" />
-          <div className="h-28 rounded-[6px] bg-[#15181D] border border-[#252A31]" />
+          <div className="h-28 rounded-xl bg-white border border-slate-200 shadow-xs" />
+          <div className="h-28 rounded-xl bg-white border border-slate-200 shadow-xs" />
+          <div className="h-28 rounded-xl bg-white border border-slate-200 shadow-xs" />
+          <div className="h-28 rounded-xl bg-white border border-slate-200 shadow-xs" />
         </div>
       </div>
     );
@@ -52,44 +52,50 @@ export const ApiDetailPage: React.FC = () => {
     }
   };
 
-  const hourlyBaseline = baselines?.find(b => b.metric === 'hourly_distribution');
-  const hourlyData = hourlyBaseline ? hourlyBaseline.baseline_values.map((baseVal: number, hour: number) => ({
-    hour: `${hour}:00`,
-    baseline: baseVal,
-    live: hourlyBaseline.live_values[hour] || 0,
-  })) : [];
+  const hourlyBaseline = baselines?.find((b) => b.metric === 'hourly_distribution');
+  const hourlyData = hourlyBaseline
+    ? hourlyBaseline.baseline_values.map((baseVal: number, hour: number) => ({
+        hour: `${hour}:00`,
+        baseline: baseVal,
+        live: hourlyBaseline.live_values[hour] || 0,
+      }))
+    : [];
 
   const riskColor =
-    item.risk_score >= 90 ? 'text-[#E5484D]' :
-    item.risk_score >= 75 ? 'text-[#F76B15]' :
-    item.risk_score >= 50 ? 'text-[#E5A100]' : 'text-[#8B929C]';
+    item.risk_score >= 90
+      ? 'text-red-700'
+      : item.risk_score >= 75
+      ? 'text-amber-800'
+      : item.risk_score >= 50
+      ? 'text-yellow-800'
+      : 'text-slate-600';
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5 select-none font-sans pb-12">
       {/* Header bar */}
-      <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+        <div className="flex items-start gap-3.5">
           <Link
             to="/inventory"
-            className="p-1.5 rounded-[4px] bg-[#0E1013] text-[#8B929C] hover:text-[#E6E8EB] border border-[#252A31] transition-colors mt-0.5"
+            className="p-2 rounded-xl bg-slate-50 text-slate-500 hover:text-slate-900 border border-slate-200 hover:border-slate-300 transition-colors mt-0.5 shadow-2xs"
             title="Back to inventory"
           >
-            <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
+            <ArrowLeft className="w-4 h-4" strokeWidth={2} />
           </Link>
           <div>
             <div className="flex items-center gap-2">
               <MethodTag method={item.method} />
-              <h1 className="text-[15px] font-semibold text-[#E6E8EB] font-mono">{item.path_template}</h1>
+              <h1 className="text-base font-bold text-slate-900 font-mono">{item.path_template}</h1>
               <StatusTag status={item.status} />
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-[11px] text-[#8B929C] mt-1 font-mono">
-              <span>ID: {item.api_id}</span>
+            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mt-1.5 font-mono">
+              <span>ID: <strong className="text-slate-800">{item.api_id}</strong></span>
               <span>·</span>
-              <span>Exposure: <span className="text-[#E6E8EB] capitalize">{item.exposure}</span></span>
+              <span>Exposure: <span className="text-slate-800 capitalize font-medium">{item.exposure}</span></span>
               <span>·</span>
-              <span>Auth: <span className="text-[#E6E8EB] capitalize">{item.auth_type}</span></span>
+              <span>Auth: <span className="text-slate-800 capitalize font-medium">{item.auth_type}</span></span>
               <span>·</span>
-              <span>Requests: <span className="text-[#E6E8EB]">{item.request_count.toLocaleString()}</span></span>
+              <span>Requests: <span className="text-slate-800 font-medium">{item.request_count.toLocaleString()}</span></span>
               <span>·</span>
               <span>Last seen: <RelativeTime timestamp={item.last_seen} /></span>
             </div>
@@ -99,48 +105,48 @@ export const ApiDetailPage: React.FC = () => {
         {/* Risk score */}
         <div className="flex items-center gap-3 shrink-0">
           <div className="text-right">
-            <div className="text-[11px] text-[#8B929C]">Risk score</div>
+            <div className="text-xs text-slate-400 font-mono">Risk score</div>
             <div className="flex items-baseline gap-1 font-mono">
-              <span className={`text-xl font-bold ${riskColor}`}>{item.risk_score}</span>
-              <span className="text-[11px] text-[#8B929C]">/ 100</span>
+              <span className={`text-2xl font-bold ${riskColor}`}>{item.risk_score}</span>
+              <span className="text-xs text-slate-400">/ 100</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Rationale notification */}
-      <div className="p-3 bg-[#15181D] border border-[#252A31] rounded-[6px] text-[12px] flex items-start gap-2 text-[#8B929C]">
-        <AlertCircle className="w-4 h-4 text-[#E5A100] shrink-0 mt-0.5" strokeWidth={1.5} />
+      <div className="p-4 bg-amber-50/70 border border-amber-200/80 rounded-2xl text-xs flex items-start gap-2.5 text-amber-900 shadow-2xs">
+        <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" strokeWidth={2} />
         <div>
-          <span className="text-[#E6E8EB] font-medium">Status explanation: </span>
+          <span className="font-bold text-amber-950">Status explanation: </span>
           <span>{getStatusExplanation()}</span>
         </div>
       </div>
 
       {/* Risk Factors Breakdown */}
       <div>
-        <h2 className="text-[13px] font-semibold text-[#E6E8EB] mb-2">Composite risk factor breakdown</h2>
+        <h2 className="text-sm font-semibold text-slate-900 mb-2.5">Composite Risk Factor Breakdown</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           {risk?.breakdown?.map((factor) => {
             const pct = Math.round((factor.points / factor.max_points) * 100);
             return (
               <div
                 key={factor.factor}
-                className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-3 flex flex-col justify-between"
+                className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between shadow-2xs"
               >
                 <div>
-                  <div className="flex items-center justify-between text-[11px] text-[#8B929C] mb-1">
-                    <span className="text-[#E6E8EB] font-medium">{factor.factor}</span>
-                    <span className="font-mono">{factor.points} / {factor.max_points} pts</span>
+                  <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+                    <span className="text-slate-900 font-bold">{factor.factor}</span>
+                    <span className="font-mono text-[11px]">{factor.points} / {factor.max_points} pts</span>
                   </div>
-                  <div className="h-1.5 w-full bg-[#0E1013] rounded-full overflow-hidden my-1.5">
+                  <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden my-2">
                     <div
-                      className="h-full bg-[#4C8DFF]"
+                      className="h-full bg-blue-600 rounded-full"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
                 </div>
-                <p className="text-[11px] text-[#8B929C] mt-2 line-clamp-2">
+                <p className="text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">
                   {factor.reason}
                 </p>
               </div>
@@ -150,39 +156,39 @@ export const ApiDetailPage: React.FC = () => {
       </div>
 
       {/* Discovered Parameters Table */}
-      <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] overflow-hidden">
-        <div className="px-4 py-2.5 border-b border-[#252A31] bg-[#15181D] flex items-center justify-between">
-          <h2 className="text-[13px] font-semibold text-[#E6E8EB]">Discovered request parameters</h2>
-          <span className="text-[11px] text-[#8B929C] font-mono">{item.parameters.length} total parameters</span>
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+        <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-900">Discovered Request Parameters</h2>
+          <span className="text-xs text-slate-400 font-mono">{item.parameters.length} total parameters</span>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-[12px] border-collapse">
-            <thead className="bg-[#0E1013] text-[#8B929C] border-b border-[#252A31] text-[11px] select-none">
-              <tr className="h-8">
-                <th className="px-3 font-normal">Parameter</th>
-                <th className="px-3 font-normal w-28">Location</th>
-                <th className="px-3 font-normal w-28">Type</th>
-                <th className="px-3 font-normal w-28 text-right">Required</th>
+          <table className="w-full text-left text-xs border-collapse">
+            <thead className="bg-slate-50 text-slate-500 border-b border-slate-200 text-[11px] select-none font-sans">
+              <tr className="h-9">
+                <th className="px-4 font-semibold">Parameter</th>
+                <th className="px-4 font-semibold w-28">Location</th>
+                <th className="px-4 font-semibold w-28">Type</th>
+                <th className="px-4 font-semibold w-28 text-right">Required</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#252A31]">
+            <tbody className="divide-y divide-slate-100">
               {item.parameters.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-3 py-4 text-center text-[#8B929C]">
+                  <td colSpan={4} className="px-4 py-8 text-center text-slate-400 font-mono">
                     No path or query parameters defined.
                   </td>
                 </tr>
               ) : (
                 item.parameters.map((param) => (
-                  <tr key={param.name} className="h-9 hover:bg-[#1C2026] transition-colors">
-                    <td className="px-3 font-mono text-[12px] text-[#E6E8EB]">{param.name}</td>
-                    <td className="px-3 text-[11px] text-[#8B929C] capitalize">{param.in}</td>
-                    <td className="px-3 text-[11px] text-[#8B929C] font-mono">{param.type}</td>
-                    <td className="px-3 text-right text-[11px]">
+                  <tr key={param.name} className="h-10 hover:bg-slate-50 transition-colors">
+                    <td className="px-4 font-mono text-xs text-slate-900 font-semibold">{param.name}</td>
+                    <td className="px-4 text-xs text-slate-600 capitalize">{param.in}</td>
+                    <td className="px-4 text-xs text-slate-600 font-mono">{param.type}</td>
+                    <td className="px-4 text-right text-xs">
                       {param.required ? (
-                        <span className="text-[#E5A100]">Yes</span>
+                        <span className="text-amber-800 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Yes</span>
                       ) : (
-                        <span className="text-[#5C626C]">No</span>
+                        <span className="text-slate-400">No</span>
                       )}
                     </td>
                   </tr>
@@ -194,61 +200,61 @@ export const ApiDetailPage: React.FC = () => {
       </div>
 
       {/* Baseline Comparison Chart & Related Alerts */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Baseline comparison chart (col-span-7) */}
-        <div className="lg:col-span-7 bg-[#15181D] border border-[#252A31] rounded-[6px] p-4 flex flex-col justify-between">
+        <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-xs">
           <div>
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-[13px] font-semibold text-[#E6E8EB]">Hourly traffic baseline vs live observed</h3>
-                <p className="text-[11px] text-[#8B929C]">Model baseline distribution compared against current hourly traffic</p>
+                <h3 className="text-sm font-semibold text-slate-900">Hourly Traffic Baseline vs Live Observed</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Model baseline distribution compared against current hourly traffic</p>
               </div>
             </div>
 
             <div className="h-56 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={hourlyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="2 2" stroke="#252A31" vertical={false} />
-                  <XAxis dataKey="hour" stroke="#5C626C" tick={{ fontSize: 10, fill: '#8B929C', fontFamily: 'JetBrains Mono' }} tickLine={false} />
-                  <YAxis stroke="#5C626C" tick={{ fontSize: 10, fill: '#8B929C', fontFamily: 'JetBrains Mono' }} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+                  <XAxis dataKey="hour" stroke="#E2E8F0" tick={{ fontSize: 10, fill: '#64748B', fontFamily: 'JetBrains Mono' }} tickLine={false} />
+                  <YAxis stroke="#E2E8F0" tick={{ fontSize: 10, fill: '#64748B', fontFamily: 'JetBrains Mono' }} tickLine={false} />
                   <Tooltip
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         return (
-                          <div className="bg-[#15181D] border border-[#252A31] p-2 rounded-[4px] text-[11px] font-mono text-[#E6E8EB]">
-                            <div>Hour: {payload[0].payload.hour}</div>
-                            <div className="text-[#8B929C]">Baseline: {payload[0].value}</div>
-                            <div className="text-[#4C8DFF]">Observed: {payload[1]?.value || 0}</div>
+                          <div className="bg-white border border-slate-200 p-3 rounded-xl text-xs font-mono text-slate-900 shadow-xl">
+                            <div className="text-slate-400 text-[10.5px]">Hour: {payload[0].payload.hour}</div>
+                            <div className="text-slate-500 mt-1">Baseline: {payload[0].value}</div>
+                            <div className="text-blue-600 font-bold">Observed: {payload[1]?.value || 0}</div>
                           </div>
                         );
                       }
                       return null;
                     }}
                   />
-                  <Bar dataKey="baseline" fill="#3A424E" radius={[2, 2, 0, 0]} name="Baseline" />
-                  <Bar dataKey="live" fill="#4C8DFF" radius={[2, 2, 0, 0]} name="Live" />
+                  <Bar dataKey="baseline" fill="#CBD5E1" radius={[3, 3, 0, 0]} name="Baseline" />
+                  <Bar dataKey="live" fill="#2563EB" radius={[3, 3, 0, 0]} name="Live" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="pt-2 mt-2 border-t border-[#252A31] flex items-center justify-between text-[11px] text-[#8B929C]">
+          <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-mono">
             <span>Baseline computed over 30-day moving window</span>
-            <span className="font-mono">Metric: hourly_distribution</span>
+            <span>Metric: hourly_distribution</span>
           </div>
         </div>
 
         {/* Related alerts list (col-span-5) */}
-        <div className="lg:col-span-5 bg-[#15181D] border border-[#252A31] rounded-[6px] overflow-hidden flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs flex flex-col justify-between">
           <div>
-            <div className="px-4 py-2.5 border-b border-[#252A31] flex items-center justify-between bg-[#15181D]">
-              <h3 className="text-[13px] font-semibold text-[#E6E8EB]">Related threat alerts</h3>
-              <span className="text-[11px] text-[#8B929C] font-mono">{related_alerts?.length || 0} alerts</span>
+            <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-slate-900">Related Threat Alerts</h3>
+              <span className="text-xs text-slate-400 font-mono">{related_alerts?.length || 0} alerts</span>
             </div>
 
-            <div className="divide-y divide-[#252A31]">
+            <div className="divide-y divide-slate-100">
               {!related_alerts || related_alerts.length === 0 ? (
-                <div className="p-6 text-center text-[#8B929C] text-[12px]">
+                <div className="p-8 text-center text-slate-400 text-xs font-mono">
                   No active abuse alerts associated with this endpoint.
                 </div>
               ) : (
@@ -256,27 +262,28 @@ export const ApiDetailPage: React.FC = () => {
                   <Link
                     key={alt.alert_id}
                     to={`/alerts/${alt.alert_id}`}
-                    className="p-3 block hover:bg-[#1C2026] transition-colors"
+                    className="p-3.5 block hover:bg-slate-50 transition-colors"
                   >
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
                         <SeverityDot severity={alt.severity} />
-                        <span className="text-[12px] font-medium text-[#E6E8EB]">{alt.type}</span>
+                        <span className="text-xs font-bold text-slate-900">{alt.type}</span>
                       </div>
                       <RelativeTime timestamp={alt.last_seen} />
                     </div>
-                    <p className="text-[11px] text-[#8B929C] line-clamp-1">{alt.reason}</p>
-                    <div className="text-[10px] text-[#5C626C] font-mono mt-1">Actor: {alt.actor} · {alt.owasp}</div>
+                    <p className="text-xs text-slate-600 line-clamp-1 mt-1">{alt.reason}</p>
+                    <div className="text-[11px] text-slate-400 font-mono mt-1">Actor: {alt.actor} · {alt.owasp}</div>
                   </Link>
                 ))
               )}
             </div>
           </div>
 
-          <div className="p-3 border-t border-[#252A31] bg-[#0E1013] text-[11px] text-[#8B929C] flex items-center justify-between">
-            <span>Click alert to open forensic investigation</span>
-            <Link to="/alerts" className="text-[#4C8DFF] hover:underline">
-              All alerts →
+          <div className="p-4 border-t border-slate-100 bg-slate-50 text-xs text-slate-600 flex items-center justify-between font-mono">
+            <span>Click alert to open forensic evidence</span>
+            <Link to="/alerts" className="text-blue-600 font-bold hover:underline flex items-center gap-1">
+              <span>All alerts</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
@@ -284,3 +291,5 @@ export const ApiDetailPage: React.FC = () => {
     </div>
   );
 };
+
+export default ApiDetailPage;

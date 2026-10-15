@@ -16,16 +16,16 @@ export const QUERY_KEYS = {
   health: ['health'],
 };
 
-// 1. Posture hook - polls every 4 seconds
+// 1. Posture hook - polls every 1.5 seconds
 export function usePostureQuery() {
   return useQuery({
     queryKey: QUERY_KEYS.posture,
     queryFn: () => apiClient.getPosture(),
-    refetchInterval: 4000,
+    refetchInterval: 1500,
   });
 }
 
-// 2. Inventory query
+// 2. Inventory query - polls every 2 seconds
 export function useInventoryQuery(params?: {
   status?: string;
   auth?: string;
@@ -36,7 +36,7 @@ export function useInventoryQuery(params?: {
   return useQuery({
     queryKey: QUERY_KEYS.inventory(params),
     queryFn: () => apiClient.getInventory(params),
-    refetchInterval: 5000,
+    refetchInterval: 2000,
   });
 }
 
@@ -46,10 +46,11 @@ export function useInventoryItemQuery(apiId: string) {
     queryKey: QUERY_KEYS.inventoryItem(apiId),
     queryFn: () => apiClient.getInventoryItem(apiId),
     enabled: !!apiId,
+    refetchInterval: 2000,
   });
 }
 
-// 4. Alerts query - polls every 3 seconds for new live alerts
+// 4. Alerts query - polls every 1.5 seconds for new live alerts
 export function useAlertsQuery(params?: {
   severity?: string;
   type?: string;
@@ -60,7 +61,7 @@ export function useAlertsQuery(params?: {
   return useQuery({
     queryKey: QUERY_KEYS.alerts(params),
     queryFn: () => apiClient.getAlerts(params),
-    refetchInterval: 3000,
+    refetchInterval: 1500,
   });
 }
 
@@ -70,7 +71,7 @@ export function useAlertQuery(alertId: string) {
     queryKey: QUERY_KEYS.alert(alertId),
     queryFn: () => apiClient.getAlert(alertId),
     enabled: !!alertId,
-    refetchInterval: 4000,
+    refetchInterval: 2000,
   });
 }
 
@@ -80,7 +81,7 @@ export function useAlertRequestsQuery(alertId: string) {
     queryKey: QUERY_KEYS.alertRequests(alertId),
     queryFn: () => apiClient.getAlertRequests(alertId),
     enabled: !!alertId,
-    refetchInterval: 4000,
+    refetchInterval: 2000,
   });
 }
 
@@ -90,7 +91,7 @@ export function useActorActivityQuery(actor: string) {
     queryKey: QUERY_KEYS.actorActivity(actor),
     queryFn: () => apiClient.getActorActivity(actor),
     enabled: !!actor,
-    refetchInterval: 5000,
+    refetchInterval: 2000,
   });
 }
 
@@ -108,20 +109,21 @@ export function useUpdateAlertStatusMutation() {
   });
 }
 
-// 9. Traffic Stats query - polls every 4 seconds
+// 9. Traffic Stats query - polls every 2 seconds
 export function useTrafficStatsQuery(window: string = '1h') {
   return useQuery({
     queryKey: QUERY_KEYS.trafficStats(window),
     queryFn: () => apiClient.getTrafficStats(window),
-    refetchInterval: 4000,
+    refetchInterval: 2000,
   });
 }
 
-// 10. Evaluation query
+// 10. Evaluation query - polls every 1.5 seconds for live simulation validation
 export function useEvaluationQuery() {
   return useQuery({
     queryKey: QUERY_KEYS.evaluation,
     queryFn: () => apiClient.getEvaluation(),
+    refetchInterval: 1500,
   });
 }
 
@@ -130,16 +132,16 @@ export function useHealthQuery() {
   return useQuery({
     queryKey: QUERY_KEYS.health,
     queryFn: () => apiClient.getHealth(),
-    refetchInterval: 8000,
+    refetchInterval: 5000,
   });
 }
 
-// 12. Defense Status hook - polls every 3 seconds for live active defense stats
+// 12. Defense Status hook - polls every 1.5 seconds for live active defense stats
 export function useDefenseStatusQuery() {
   return useQuery({
     queryKey: ['defenseStatus'],
     queryFn: () => apiClient.getDefenseStatus(),
-    refetchInterval: 3000,
+    refetchInterval: 1500,
   });
 }
 

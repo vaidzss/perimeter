@@ -9,9 +9,9 @@ export const Breadcrumbs: React.FC = () => {
   if (pathnames.length === 0) return null;
 
   return (
-    <nav className="flex items-center gap-1.5 text-[12px] text-[#8B929C] mb-3 select-none">
-      <Link to="/" className="hover:text-[#E6E8EB] transition-colors">
-        Overview
+    <nav className="flex items-center gap-1.5 text-xs font-sans text-slate-500 mb-5 select-none">
+      <Link to="/overview" className="hover:text-slate-900 transition-colors font-medium">
+        Command Center
       </Link>
       {pathnames.map((name, index) => {
         const routeTo = `/${pathnames.slice(0, index + 1).join('/')}`;
@@ -19,11 +19,11 @@ export const Breadcrumbs: React.FC = () => {
 
         return (
           <React.Fragment key={routeTo}>
-            <ChevronRight className="w-3 h-3 text-[#5C626C]" strokeWidth={1.5} />
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             {isLast ? (
-              <span className="text-[#E6E8EB] font-normal">{name}</span>
+              <span className="text-slate-900 font-semibold capitalize">{name}</span>
             ) : (
-              <Link to={routeTo} className="hover:text-[#E6E8EB] capitalize transition-colors">
+              <Link to={routeTo} className="hover:text-slate-900 capitalize transition-colors font-medium">
                 {name}
               </Link>
             )}

@@ -11,7 +11,7 @@ Detects Indian DPI & FinTech identifiers:
 
 import re
 import json
-from typing import List, Tuple, Dict, Any, Union
+from typing import List, Tuple, Dict, Any, Union, Optional
 from core.models import PIIMatch, PIISeverity
 
 # Regex patterns
@@ -102,7 +102,7 @@ class PIIClassifier:
         return "***"
 
     @classmethod
-    def classify_payload(cls, payload: Union[str, Dict, List, None]) -> Tuple[List[PIIMatch], PIISeverity]:
+    def classify_payload(cls, payload: Union[str, Dict, List, None], path: Optional[str] = None) -> Tuple[List[PIIMatch], PIISeverity]:
         if not payload:
             return [], PIISeverity.NONE
 
@@ -178,18 +178,20 @@ class PIIClassifier:
                 severity=PIISeverity.SENSITIVE
             ))
 
-        # 6. Check Bearer / JWT token leaks
-        bearer_matches = BEARER_REGEX.findall(text)
-        if bearer_matches:
-            flat_tokens = [m[0] or m[1] for m in bearer_matches if (m[0] or m[1])]
-            if flat_tokens:
-                has_critical = True
-                matches.append(PIIMatch(
-                    entity_type="BEARER_TOKEN",
-                    count=len(flat_tokens),
-                    sample_masked=cls._mask(flat_tokens[0], "BEARER_TOKEN"),
-                    severity=PIISeverity.CRITICAL
-                ))
+        # 6. Check Bearer / JWT token leaks (exclude legitimate auth endpoints where issuing token is normal)
+        is_auth_route = path and any(a in path.lower() for a in ("/auth/login", "/auth/refresh", "/auth/token"))
+        if not is_auth_route:
+            bearer_matches = BEARER_REGEX.findall(text)
+            if bearer_matches:
+                flat_tokens = [m[0] or m[1] for m in bearer_matches if (m[0] or m[1])]
+                if flat_tokens:
+                    has_critical = True
+                    matches.append(PIIMatch(
+                        entity_type="BEARER_TOKEN",
+                        count=len(flat_tokens),
+                        sample_masked=cls._mask(flat_tokens[0], "BEARER_TOKEN"),
+                        severity=PIISeverity.CRITICAL
+                    ))
 
         # Overall severity
         if has_critical:

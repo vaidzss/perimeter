@@ -74,3 +74,35 @@ async def update_contact_details(
         "phone": user["phone"],
         "email": user["email"]
     }
+
+
+class WebhookAvatarRequest(BaseModel):
+    avatar_url: str = Field(..., json_schema_extra={"example": "http://169.254.169.254/latest/meta-data/"})
+
+
+@router.post("/me/webhook-avatar")
+async def update_webhook_avatar(
+    payload: WebhookAvatarRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """
+    Update user profile avatar from an external URL (OWASP API7: SSRF vulnerability target).
+    Accepts arbitrary URL that could attempt SSRF to link-local cloud metadata (169.254.169.254)
+    or internal services.
+    """
+    sub = current_user.get("sub")
+    user = USERS_DB.get(sub)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User record not found"
+        )
+
+    user["avatar_url"] = payload.avatar_url
+    return {
+        "status": "success",
+        "message": "Avatar webhook registered",
+        "user_id": sub,
+        "avatar_url": payload.avatar_url,
+        "download_status": "queued"
+    }

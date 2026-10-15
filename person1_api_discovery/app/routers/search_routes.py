@@ -17,15 +17,24 @@ async def search_merchants(
     page: int = Query(1, ge=1, description="Page number"),
     limit: int = Query(10, ge=1, le=50, description="Items per page"),
     category: Optional[str] = Query(None, description="Category filter"),
+    q: Optional[str] = Query(None, description="Search query string (SQLi/Command injection test target)"),
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
     Search merchant directory with pagination (JWT Auth).
-    Ideal target for Person 2's automated data scraping and high-speed harvesting detector.
+    Ideal target for Person 2's automated data scraping and high-speed harvesting detector,
+    as well as OWASP API8 Injection testing.
     """
     items = MERCHANTS_DIRECTORY
     if category:
         items = [m for m in items if m["category"].upper() == category.upper()]
+
+    if q:
+        # Vulnerable simulated search query: tautologies match all items
+        if "' or 1=1" in q.lower() or "union select" in q.lower() or "--" in q:
+            items = MERCHANTS_DIRECTORY
+        else:
+            items = [m for m in items if q.lower() in m.get("name", "").lower() or q.lower() in m.get("category", "").lower()]
 
     total = len(items)
     start = (page - 1) * limit

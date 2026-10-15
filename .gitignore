@@ -1,11 +1,56 @@
+# Environments
 venv/
 .venv/
+env/
+.env
+.env.*
+
+# Python bytecode & cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Databases & Runtime Logs
 *.db
 *.sqlite3
 *.jsonl
+*.log
+logs/
+person1_api_discovery/logs/
+frontend/bharatpay/backend/logs/
+
+# Dependencies
 node_modules/
+*/node_modules/
 frontend/node_modules/
+frontend/dashboard/node_modules/
+frontend/bharatpay/frontend/node_modules/
+
+# Production Builds & Bundles
+dist/
+build/
+*/dist/
 frontend/dist/
-.env
+frontend/dashboard/dist/
+frontend/bharatpay/frontend/dist/
+
+# Compressed Archives
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+
+# IDE & OS Artifacts
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Agent skills & Scratch testing
+.agents/
+scratch/
+reviewer_screenshots/

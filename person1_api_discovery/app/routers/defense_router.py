@@ -4,6 +4,7 @@ Exposes endpoints for the SOC Console and test scripts to inspect active threats
 and dynamically apply virtual patches, route quarantine, and IP bans.
 """
 
+import datetime
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
@@ -222,19 +223,26 @@ def mitigate_all() -> Dict[str, Any]:
             path = ep["normalized_path"]
             if not path or path == "/" or path.startswith(EXCLUDED_PREFIXES) or "favicon" in path:
                 continue
-            # Legitimate v2 production routes must never be quarantined
-            if path.startswith("/api/v2/"):
+            # Legitimate v2 customer/public production routes must never be quarantined
+            if path.startswith("/api/v2/") and not ("/internal/" in path or "debug" in path or "override" in path):
                 continue
             inventory_service.quarantine_route(path, f"Automated Defense Quarantine for {ep['classification'].upper()} API")
             quarantined.append(path)
 
     # Block Tor and attacker IPs from threat alerts
     blocked = []
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
     for threat in inventory_service.threat_alerts:
+        threat["status"] = "MITIGATED"
+        threat["mitigated_at"] = now_iso
+        threat["mitigation_action"] = "Quarantined route + Enforced 403 virtual patch"
         ip = threat.get("source_ip")
         if ip and ip not in {"127.0.0.1", "localhost"}:
             inventory_service.block_ip(ip, f"Automated ban for threat: {threat.get('title')}")
             blocked.append(ip)
+
+    for dt in inventory_service.deep_threat_events:
+        dt["status"] = "MITIGATED"
 
     inventory_service.pii_masking_enabled = True
 

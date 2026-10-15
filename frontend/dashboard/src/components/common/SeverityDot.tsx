@@ -18,42 +18,49 @@ export const SeverityDot: React.FC<SeverityDotProps> = ({
     switch (norm) {
       case 'critical':
         return {
-          dotColor: 'bg-[#E5484D]',
-          textColor: 'text-[#E5484D]',
+          dotColor: 'bg-red-600',
+          textColor: 'text-red-700',
+          badgeBg: 'bg-red-50 border-red-200',
           label: 'Critical',
         };
       case 'high':
         return {
-          dotColor: 'bg-[#F76B15]',
-          textColor: 'text-[#F76B15]',
+          dotColor: 'bg-amber-600',
+          textColor: 'text-amber-800',
+          badgeBg: 'bg-amber-50 border-amber-200',
           label: 'High',
         };
       case 'medium':
         return {
-          dotColor: 'bg-[#E5A100]',
-          textColor: 'text-[#E5A100]',
+          dotColor: 'bg-yellow-600',
+          textColor: 'text-yellow-800',
+          badgeBg: 'bg-yellow-50 border-yellow-200',
           label: 'Medium',
         };
       case 'informational':
         return {
-          dotColor: 'bg-[#4C8DFF]',
-          textColor: 'text-[#4C8DFF]',
+          dotColor: 'bg-sky-600',
+          textColor: 'text-sky-800',
+          badgeBg: 'bg-sky-50 border-sky-200',
           label: 'Informational',
         };
       case 'low':
       default:
         return {
-          dotColor: 'bg-[#8B929C]',
-          textColor: 'text-[#8B929C]',
+          dotColor: 'bg-slate-500',
+          textColor: 'text-slate-700',
+          badgeBg: 'bg-slate-100 border-slate-200',
           label: 'Low',
         };
     }
   })();
 
   return (
-    <span className={`inline-flex items-center gap-1.5 text-[12px] font-normal ${className}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[11px] font-semibold ${config.badgeBg} ${config.textColor} ${className}`}
+    >
       <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${config.dotColor}`} />
-      {showLabel && <span className={config.textColor}>{config.label}</span>}
+      {showLabel && <span>{config.label}</span>}
     </span>
   );
 };

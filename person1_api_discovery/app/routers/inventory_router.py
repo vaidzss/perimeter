@@ -88,3 +88,28 @@ async def get_recent_telemetry_logs(
         "total_buffered": len(logs_list),
         "logs": sliced
     }
+
+
+@router.get("/deep-threats")
+async def get_deep_threats(
+    limit: int = Query(50, ge=1, le=500, description="Maximum number of deep threats to return"),
+    owasp_category: Optional[str] = Query(None, description="Filter by OWASP API category (e.g. API7, API8, API3, API4, API10)")
+):
+    """
+    Returns detected deep semantic threats (Blind Spots #1 - #5) with explainable reasons
+    and telemetry diagnostics for SOC analysts and Person 2 risk engine.
+    """
+    from person1_api_discovery.app.egress_guard import safe_external_client
+
+    threats = inventory_service.get_deep_threats(limit=limit, owasp_filter=owasp_category)
+    supply_chain = list(safe_external_client.threat_telemetry_log)
+    supply_chain.reverse()
+
+    return {
+        "count": len(threats),
+        "total_detected": len(inventory_service.deep_threat_events),
+        "threats": threats,
+        "supply_chain_alerts_count": len(supply_chain),
+        "supply_chain_alerts": supply_chain[:limit]
+    }
+

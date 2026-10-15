@@ -5,8 +5,9 @@ Accounts Router:
 7. POST /api/v2/accounts/beneficiaries (JWT Auth)
 """
 
+import json
 from typing import Dict, Any, List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
 from pydantic import BaseModel, Field
 
 from person1_api_discovery.app.auth import get_current_user
@@ -134,4 +135,33 @@ async def add_beneficiary(
         "status": "success",
         "message": "Beneficiary registered successfully",
         "beneficiary": new_ben
+    }
+
+
+@router.post("/import-statement")
+async def import_statement(
+    request: Request,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """
+    Import external statement batch (OWASP API4: Algorithmic Complexity & ReDoS target).
+    Accepts deeply nested JSON structures or evil regex pattern strings.
+    """
+    body_bytes = await request.body()
+    user_account = current_user.get("account_id", "1001")
+    parsed_json = None
+    raw_text = ""
+    try:
+        raw_text = body_bytes.decode("utf-8", errors="ignore")
+        parsed_json = json.loads(raw_text)
+    except Exception:
+        pass
+
+    return {
+        "status": "PROCESSED",
+        "account_id": user_account,
+        "payload_bytes": len(body_bytes),
+        "is_json": parsed_json is not None,
+        "entries_count": len(parsed_json) if isinstance(parsed_json, list) else 1,
+        "sample": raw_text[:200]
     }

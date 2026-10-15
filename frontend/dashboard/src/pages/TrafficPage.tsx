@@ -7,8 +7,9 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
+import { Activity, Clock, ShieldCheck, AlertTriangle } from 'lucide-react';
 
 export const TrafficPage: React.FC = () => {
   const [window, setWindow] = useState('1h');
@@ -16,39 +17,42 @@ export const TrafficPage: React.FC = () => {
 
   if (isLoading || !stats) {
     return (
-      <div className="space-y-4 animate-pulse">
-        <div className="h-14 rounded-[6px] bg-[#15181D] border border-[#252A31]" />
+      <div className="space-y-4 animate-pulse select-none">
+        <div className="h-16 rounded-2xl bg-white border border-slate-200 shadow-xs" />
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-20 rounded-[6px] bg-[#15181D] border border-[#252A31]" />
+            <div key={i} className="h-24 rounded-xl bg-white border border-slate-200 shadow-xs" />
           ))}
         </div>
-        <div className="h-64 rounded-[6px] bg-[#15181D] border border-[#252A31]" />
+        <div className="h-72 rounded-2xl bg-white border border-slate-200 shadow-xs" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5 select-none font-sans pb-12">
       {/* Header and window picker */}
-      <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
         <div>
-          <h1 className="text-[15px] font-semibold text-[#E6E8EB]">Traffic telemetry & baselines</h1>
-          <p className="text-[12px] text-[#8B929C] mt-0.5">
+          <div className="flex items-center gap-2">
+            <Activity className="w-5 h-5 text-blue-600" />
+            <h1 className="text-lg font-bold text-slate-900 tracking-tight">Traffic Telemetry & Baselines</h1>
+          </div>
+          <p className="text-[12px] text-slate-500 mt-0.5">
             Ingress gateway telemetry, latency percentiles, error rates, and top consumer attribution
           </p>
         </div>
 
         {/* Time window selector */}
-        <div className="flex items-center gap-1 bg-[#0E1013] border border-[#252A31] p-1 rounded-[6px] text-[11px] self-start md:self-center font-mono">
+        <div className="flex items-center gap-1 bg-slate-100 border border-slate-200 p-1 rounded-xl text-xs self-start md:self-center font-mono">
           {['15m', '1h', '6h', '24h'].map((w) => (
             <button
               key={w}
               onClick={() => setWindow(w)}
-              className={`px-2.5 py-1 rounded-[4px] transition-colors ${
+              className={`px-3 py-1 rounded-lg transition-all ${
                 window === w
-                  ? 'bg-[#15181D] text-[#E6E8EB] border border-[#343B45] font-medium shadow-xs'
-                  : 'text-[#8B929C] hover:text-[#E6E8EB]'
+                  ? 'bg-white text-blue-700 font-semibold shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               {w}
@@ -59,103 +63,113 @@ export const TrafficPage: React.FC = () => {
 
       {/* Latency & Error Rate Strip */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-3">
-          <span className="text-[11px] text-[#8B929C]">p50 Latency</span>
-          <div className="text-xl font-semibold text-[#E6E8EB] font-mono mt-0.5">{stats.latency_percentiles.p50} ms</div>
-          <span className="text-[11px] text-[#10b981]">Baseline compliant</span>
+        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
+          <span className="text-xs text-slate-500 font-medium">p50 Median Latency</span>
+          <div className="text-2xl font-bold text-slate-900 font-mono mt-1">
+            {stats.latency_percentiles.p50} <span className="text-xs font-normal text-slate-500">ms</span>
+          </div>
+          <span className="text-[11px] text-emerald-700 font-medium font-mono">Baseline compliant</span>
         </div>
 
-        <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-3">
-          <span className="text-[11px] text-[#8B929C]">p90 Latency</span>
-          <div className="text-xl font-semibold text-[#E6E8EB] font-mono mt-0.5">{stats.latency_percentiles.p90} ms</div>
-          <span className="text-[11px] text-[#8B929C]">Nominal SLA</span>
+        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
+          <span className="text-xs text-slate-500 font-medium">p90 Latency</span>
+          <div className="text-2xl font-bold text-slate-900 font-mono mt-1">
+            {stats.latency_percentiles.p90} <span className="text-xs font-normal text-slate-500">ms</span>
+          </div>
+          <span className="text-[11px] text-slate-500 font-mono">Nominal SLA</span>
         </div>
 
-        <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-3">
-          <span className="text-[11px] text-[#8B929C]">p99 Latency</span>
-          <div className="text-xl font-semibold text-[#E6E8EB] font-mono mt-0.5">{stats.latency_percentiles.p99} ms</div>
-          <span className="text-[11px] text-[#8B929C]">Spike ceiling</span>
+        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
+          <span className="text-xs text-slate-500 font-medium">p99 Latency</span>
+          <div className="text-2xl font-bold text-slate-900 font-mono mt-1">
+            {stats.latency_percentiles.p99} <span className="text-xs font-normal text-slate-500">ms</span>
+          </div>
+          <span className="text-[11px] text-slate-500 font-mono">Spike ceiling</span>
         </div>
 
-        <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-3">
-          <span className="text-[11px] text-[#8B929C]">4xx Error rate</span>
-          <div className="text-xl font-semibold text-[#E5484D] font-mono mt-0.5">{stats.error_rates.rate_4xx}%</div>
-          <span className="text-[11px] text-[#E5484D]">Elevated client probes</span>
+        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
+          <span className="text-xs text-slate-500 font-medium">4xx Error Rate</span>
+          <div className="text-2xl font-bold text-rose-600 font-mono mt-1">
+            {stats.error_rates.rate_4xx}%
+          </div>
+          <span className="text-[11px] text-rose-700 font-medium font-mono">Client probes</span>
         </div>
 
-        <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-3">
-          <span className="text-[11px] text-[#8B929C]">5xx Error rate</span>
-          <div className="text-xl font-semibold text-[#E6E8EB] font-mono mt-0.5">{stats.error_rates.rate_5xx}%</div>
-          <span className="text-[11px] text-[#10b981]">0 unhandled crashes</span>
+        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-2xs">
+          <span className="text-xs text-slate-500 font-medium">5xx Error Rate</span>
+          <div className="text-2xl font-bold text-slate-900 font-mono mt-1">
+            {stats.error_rates.rate_5xx}%
+          </div>
+          <span className="text-[11px] text-emerald-700 font-medium font-mono">0 crashes</span>
         </div>
       </div>
 
       {/* Requests over time chart */}
-      <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-4 flex flex-col justify-between">
-        <div className="flex items-center justify-between mb-3">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-xs">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-[13px] font-semibold text-[#E6E8EB]">Throughput velocity (Requests / min)</h3>
-            <p className="text-[11px] text-[#8B929C]">Total requests per minute across production Envoy proxies</p>
+            <h3 className="text-sm font-semibold text-slate-900">Throughput Velocity (Requests / min)</h3>
+            <p className="text-xs text-slate-500 mt-0.5">Total requests per minute across production Envoy proxies</p>
           </div>
-          <span className="text-[11px] text-[#8B929C] font-mono">Sampling: 1-min buckets</span>
+          <span className="text-xs text-slate-400 font-mono">Sampling: 1-min buckets</span>
         </div>
 
-        <div className="h-56 w-full">
+        <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={stats.requests_over_time} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <AreaChart data={stats.requests_over_time} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
               <defs>
                 <linearGradient id="trafficPageGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#4C8DFF" stopOpacity={0.2} />
-                  <stop offset="100%" stopColor="#4C8DFF" stopOpacity={0.0} />
+                  <stop offset="0%" stopColor="#2563EB" stopOpacity={0.15} />
+                  <stop offset="100%" stopColor="#2563EB" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="2 2" stroke="#252A31" vertical={false} />
-              <XAxis dataKey="timestamp" stroke="#5C626C" tick={{ fontSize: 10, fill: '#8B929C', fontFamily: 'JetBrains Mono' }} tickLine={false} />
-              <YAxis stroke="#5C626C" tick={{ fontSize: 10, fill: '#8B929C', fontFamily: 'JetBrains Mono' }} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+              <XAxis dataKey="timestamp" stroke="#E2E8F0" tick={{ fontSize: 10, fill: '#64748B', fontFamily: 'JetBrains Mono' }} tickLine={false} />
+              <YAxis stroke="#E2E8F0" tick={{ fontSize: 10, fill: '#64748B', fontFamily: 'JetBrains Mono' }} tickLine={false} />
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     return (
-                      <div className="bg-[#15181D] border border-[#252A31] p-2 rounded-[4px] text-[11px] font-mono text-[#E6E8EB]">
-                        <div>Time: {payload[0].payload.timestamp}</div>
-                        <div className="text-[#4C8DFF]">Volume: {payload[0].value} req/min</div>
-                        <div className="text-[#E5484D]">Error rate: {payload[0].payload.error_rate}%</div>
+                      <div className="bg-white border border-slate-200 p-3 rounded-xl text-xs font-mono text-slate-900 shadow-xl">
+                        <div className="text-slate-400 text-[11px] mb-1">Time: {payload[0].payload.timestamp}</div>
+                        <div className="text-blue-600 font-bold">Volume: {payload[0].value} req/min</div>
+                        <div className="text-rose-600">Error rate: {payload[0].payload.error_rate}%</div>
                       </div>
                     );
                   }
                   return null;
                 }}
               />
-              <Area type="monotone" dataKey="requests_per_min" stroke="#4C8DFF" strokeWidth={1.5} fill="url(#trafficPageGrad)" dot={false} isAnimationActive={false} />
+              <Area type="monotone" dataKey="requests_per_min" stroke="#2563EB" strokeWidth={2} fill="url(#trafficPageGrad)" dot={false} isAnimationActive={false} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Top Consumers & Status Code Mix */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Top consumers table */}
-        <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] overflow-hidden">
-          <div className="px-4 py-2.5 border-b border-[#252A31] bg-[#15181D] flex items-center justify-between">
-            <h3 className="text-[13px] font-semibold text-[#E6E8EB]">Top consumers by request volume</h3>
-            <span className="text-[11px] text-[#8B929C] font-mono">{stats.top_consumers.length} actors</span>
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+          <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-slate-900">Top Consumers by Request Volume</h3>
+            <span className="text-xs text-slate-400 font-mono">{stats.top_consumers.length} actors</span>
           </div>
 
-          <table className="w-full text-left text-[12px] border-collapse font-mono">
-            <thead className="bg-[#0E1013] text-[#8B929C] border-b border-[#252A31] text-[11px] select-none font-sans">
-              <tr className="h-8">
-                <th className="px-3 font-normal">Actor identifier</th>
-                <th className="px-3 font-normal w-28 text-right">Requests</th>
-                <th className="px-3 font-normal w-28 text-right">Error rate</th>
+          <table className="w-full text-left text-xs border-collapse font-mono">
+            <thead className="bg-slate-50 text-slate-500 border-b border-slate-200 text-[11px] select-none font-sans">
+              <tr className="h-9">
+                <th className="px-5 font-medium">Actor Identifier</th>
+                <th className="px-5 font-medium w-28 text-right">Requests</th>
+                <th className="px-5 font-medium w-28 text-right">Error Rate</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#252A31]">
+            <tbody className="divide-y divide-slate-100">
               {stats.top_consumers.map((c, i) => (
-                <tr key={i} className="h-9 hover:bg-[#1C2026] transition-colors">
-                  <td className="px-3 text-[#E6E8EB]">{c.actor}</td>
-                  <td className="px-3 text-right text-[#8B929C]">{c.requests.toLocaleString()}</td>
-                  <td className="px-3 text-right">
-                    <span className={c.error_rate > 30 ? 'text-[#E5484D] font-medium' : 'text-[#8B929C]'}>
+                <tr key={i} className="h-10 hover:bg-slate-50 transition-colors">
+                  <td className="px-5 text-slate-800 font-semibold">{c.actor}</td>
+                  <td className="px-5 text-right text-slate-600">{c.requests.toLocaleString()}</td>
+                  <td className="px-5 text-right">
+                    <span className={c.error_rate > 30 ? 'text-rose-600 font-bold' : 'text-slate-600'}>
                       {c.error_rate}%
                     </span>
                   </td>
@@ -166,29 +180,29 @@ export const TrafficPage: React.FC = () => {
         </div>
 
         {/* Status code breakdown */}
-        <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-4 flex flex-col justify-between">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between shadow-xs">
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[13px] font-semibold text-[#E6E8EB]">HTTP response code distribution</h3>
-              <span className="text-[11px] text-[#8B929C] font-mono">Gateway aggregated</span>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-slate-900">HTTP Response Code Distribution</h3>
+              <span className="text-xs text-slate-400 font-mono">Gateway aggregated</span>
             </div>
 
-            <div className="space-y-3 font-mono text-[12px]">
+            <div className="space-y-3 font-mono text-xs">
               {stats.status_codes.map((sc, i) => {
                 const codeColor =
-                  sc.code.startsWith('2') ? 'text-[#10b981]' :
-                  sc.code.startsWith('4') ? 'text-[#E5484D]' : 'text-[#E5A100]';
+                  sc.code.startsWith('2') ? 'text-emerald-700' :
+                  sc.code.startsWith('4') ? 'text-rose-700' : 'text-amber-700';
                 const barColor =
-                  sc.code.startsWith('2') ? 'bg-[#10b981]' :
-                  sc.code.startsWith('4') ? 'bg-[#E5484D]' : 'bg-[#E5A100]';
+                  sc.code.startsWith('2') ? 'bg-emerald-500' :
+                  sc.code.startsWith('4') ? 'bg-rose-500' : 'bg-amber-500';
 
                 return (
                   <div key={i} className="space-y-1">
-                    <div className="flex justify-between items-center text-[11px]">
-                      <span className={`font-semibold ${codeColor}`}>{sc.code}</span>
-                      <span className="text-[#8B929C]">{sc.count.toLocaleString()} reqs ({sc.percentage}%)</span>
+                    <div className="flex justify-between items-center text-[11.5px]">
+                      <span className={`font-bold ${codeColor}`}>{sc.code}</span>
+                      <span className="text-slate-500">{sc.count.toLocaleString()} reqs ({sc.percentage}%)</span>
                     </div>
-                    <div className="h-1.5 w-full bg-[#0E1013] rounded-full overflow-hidden">
+                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                       <div
                         className={`h-full ${barColor}`}
                         style={{ width: `${sc.percentage}%` }}
@@ -200,12 +214,14 @@ export const TrafficPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="pt-2 mt-4 border-t border-[#252A31] text-[11px] text-[#8B929C] flex items-center justify-between font-sans">
+          <div className="pt-3 mt-4 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between font-sans">
             <span>High 401/403 volume indicates credential spray</span>
-            <span className="font-mono">Window: {window}</span>
+            <span className="font-mono text-slate-400">Window: {window}</span>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default TrafficPage;

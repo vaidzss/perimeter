@@ -39,7 +39,7 @@ def seed_traffic():
         print(f"[Seeder] Authenticated {len(tokens)} test users.")
 
         token_1001 = tokens.get("user_1001")
-        auth_1001 = {"Authorization": f"Bearer {token_1001}"}
+        auth_1001 = {"Authorization": f"Bearer {token_1001}", "X-Ground-Truth": "benign"}
 
         # 2. Legitimate Documented Traffic
         print("[Seeder] Sending legitimate Documented API requests...")
@@ -64,8 +64,8 @@ def seed_traffic():
             headers=auth_1001,
             json={"beneficiary_account": "ACCN-IN-1002", "beneficiary_ifsc": "HDFC0001234", "beneficiary_name": "Priya Patel", "amount": 2000.0}
         )
-        client.get("/api/v2/search/ifsc/HDFC0001234")
-        client.get("/api/v2/search/ifsc/SBIN0000456")
+        client.get("/api/v2/search/ifsc/HDFC0001234", headers={"X-Ground-Truth": "benign"})
+        client.get("/api/v2/search/ifsc/SBIN0000456", headers={"X-Ground-Truth": "benign"})
 
         # 3. Data Scraping Traffic Simulation
         print("[Seeder] Sending high-speed merchant directory scraping requests...")
@@ -77,7 +77,7 @@ def seed_traffic():
 
         # 4. BOLA / IDOR Attack Simulation (User 1001 accesses victims 1004, 1005, 1008)
         print("[Seeder] Sending BOLA/IDOR manipulation probes...")
-        for victim_id in ["1004", "1005", "1008"]:
+        for victim_id in ["1004", "1005", "1008", "1009", "1010"]:
             client.get(
                 f"/api/v2/accounts/{victim_id}",
                 headers={**auth_1001, "X-Ground-Truth": "attack_bola"}

@@ -42,6 +42,14 @@ def load_spec_templates(spec_path: Optional[str] = None) -> List[str]:
     return []
 
 
+KNOWN_STATIC_SUBROUTES = {
+    "statement", "statements", "import-statement", "beneficiaries", "transactions",
+    "receipt", "me", "login", "refresh", "close", "export", "reports", "merchants",
+    "active-tokens", "reset-limits", "override-limit", "env", "provisioning",
+    "aadhaar-pan-dump", "passbook-dump", "scheduled", "contact", "transfer", "status"
+}
+
+
 def match_template(raw_segments: List[str], template_segments: List[str]) -> Optional[Dict[str, str]]:
     """Checks if raw_segments match template_segments and extracts named parameters."""
     if len(raw_segments) != len(template_segments):
@@ -50,6 +58,8 @@ def match_template(raw_segments: List[str], template_segments: List[str]) -> Opt
     for r_seg, t_seg in zip(raw_segments, template_segments):
         if t_seg.startswith("{") and t_seg.endswith("}"):
             param_name = t_seg[1:-1]
+            if r_seg.lower() in KNOWN_STATIC_SUBROUTES:
+                return None
             extracted[param_name] = r_seg
         elif r_seg.lower() != t_seg.lower():
             return None

@@ -4,7 +4,7 @@ import { useAlertsQuery } from '../api/queries';
 import { useDashboardMetrics } from '../api/metrics';
 import { SeverityDot } from '../components/common/SeverityDot';
 import { RelativeTime } from '../components/common/RelativeTime';
-import { Search } from 'lucide-react';
+import { Search, ShieldAlert, ArrowRight } from 'lucide-react';
 
 export const AlertsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ export const AlertsPage: React.FC = () => {
     status: statusFilter,
   });
 
-  const filtered = alerts.filter(a => {
+  const filtered = alerts.filter((a) => {
     if (!searchTerm) return true;
     const s = searchTerm.toLowerCase();
     return (
@@ -48,9 +48,9 @@ export const AlertsPage: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (document.activeElement?.tagName === 'INPUT') return;
       if (e.key === 'j') {
-        setSelectedIdx(prev => Math.min(prev + 1, Math.max(0, filtered.length - 1)));
+        setSelectedIdx((prev) => Math.min(prev + 1, Math.max(0, filtered.length - 1)));
       } else if (e.key === 'k') {
-        setSelectedIdx(prev => Math.max(prev - 1, 0));
+        setSelectedIdx((prev) => Math.max(prev - 1, 0));
       } else if (e.key === 'Enter') {
         if (filtered[selectedIdx]) {
           navigate(`/alerts/${filtered[selectedIdx].alert_id}`);
@@ -72,64 +72,67 @@ export const AlertsPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5 select-none font-sans pb-12">
       {/* Header and summary strip */}
-      <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
         <div>
-          <h1 className="text-[15px] font-semibold text-[#E6E8EB]">Security threat alerts</h1>
-          <p className="text-[12px] text-[#8B929C] mt-0.5">
+          <div className="flex items-center gap-2">
+            <ShieldAlert className="w-5 h-5 text-blue-600" />
+            <h1 className="text-lg font-bold text-slate-900 tracking-tight">Security Threat Alerts</h1>
+          </div>
+          <p className="text-[12px] text-slate-500 mt-0.5">
             Continuous anomaly detection across BOLA, token misuse, scraping, brute force, and unauthorized access
           </p>
         </div>
 
         {/* Severity counts filter pills */}
-        <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
           <button
             onClick={() => setSeverityFilter('all')}
-            className={`px-2 py-1 rounded-[4px] border transition-colors ${
+            className={`px-3 py-1.5 rounded-xl border transition-all ${
               severityFilter === 'all'
-                ? 'bg-[#1C2026] text-[#E6E8EB] border-[#343B45] font-medium'
-                : 'bg-[#0E1013] text-[#8B929C] border-[#252A31] hover:text-[#E6E8EB]'
+                ? 'bg-slate-900 text-white border-slate-900 font-semibold shadow-2xs'
+                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
             }`}
           >
             All <span className="font-mono ml-1">{totalAlerts}</span>
           </button>
           <button
             onClick={() => setSeverityFilter('critical')}
-            className={`px-2 py-1 rounded-[4px] border transition-colors ${
+            className={`px-3 py-1.5 rounded-xl border transition-all ${
               severityFilter === 'critical'
-                ? 'bg-[#E5484D]/20 text-[#E5484D] border-[#E5484D]/50 font-medium'
-                : 'bg-[#0E1013] text-[#E5484D] border-[#E5484D]/30 hover:bg-[#E5484D]/10'
+                ? 'bg-red-600 text-white border-red-600 font-semibold shadow-2xs'
+                : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
             }`}
           >
             Critical <span className="font-mono ml-1">{criticalAlerts}</span>
           </button>
           <button
             onClick={() => setSeverityFilter('high')}
-            className={`px-2 py-1 rounded-[4px] border transition-colors ${
+            className={`px-3 py-1.5 rounded-xl border transition-all ${
               severityFilter === 'high'
-                ? 'bg-[#F76B15]/20 text-[#F76B15] border-[#F76B15]/50 font-medium'
-                : 'bg-[#0E1013] text-[#F76B15] border-[#F76B15]/30 hover:bg-[#F76B15]/10'
+                ? 'bg-amber-600 text-white border-amber-600 font-semibold shadow-2xs'
+                : 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100'
             }`}
           >
             High <span className="font-mono ml-1">{highAlerts}</span>
           </button>
           <button
             onClick={() => setSeverityFilter('medium')}
-            className={`px-2 py-1 rounded-[4px] border transition-colors ${
+            className={`px-3 py-1.5 rounded-xl border transition-all ${
               severityFilter === 'medium'
-                ? 'bg-[#E5A100]/20 text-[#E5A100] border-[#E5A100]/50 font-medium'
-                : 'bg-[#0E1013] text-[#E5A100] border-[#E5A100]/30 hover:bg-[#E5A100]/10'
+                ? 'bg-yellow-600 text-white border-yellow-600 font-semibold shadow-2xs'
+                : 'bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100'
             }`}
           >
             Medium <span className="font-mono ml-1">{mediumAlerts}</span>
           </button>
           <button
             onClick={() => setSeverityFilter('low')}
-            className={`px-2 py-1 rounded-[4px] border transition-colors ${
+            className={`px-3 py-1.5 rounded-xl border transition-all ${
               severityFilter === 'low'
-                ? 'bg-[#1C2026] text-[#8B929C] border-[#343B45] font-medium'
-                : 'bg-[#0E1013] text-[#8B929C] border-[#252A31] hover:text-[#E6E8EB]'
+                ? 'bg-slate-700 text-white border-slate-700 font-semibold shadow-2xs'
+                : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
             }`}
           >
             Low <span className="font-mono ml-1">{lowAlerts}</span>
@@ -138,28 +141,28 @@ export const AlertsPage: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] p-3 flex flex-col md:flex-row items-center justify-between gap-3 text-[12px]">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-3 text-xs shadow-xs">
         <div className="relative w-full md:w-80">
-          <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-[#8B929C]" strokeWidth={1.5} />
+          <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" strokeWidth={2} />
           <input
             type="text"
             placeholder="Search alerts by API, actor, ID, reason..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-[#0E1013] border border-[#252A31] focus:border-[#4C8DFF] rounded-[4px] pl-9 pr-3 py-1.5 text-[12px] text-[#E6E8EB] placeholder-[#8B929C] outline-hidden"
+            className="w-full bg-slate-50 border border-slate-200 focus:border-blue-600 rounded-xl pl-10 pr-3.5 py-2 text-xs text-slate-900 placeholder-slate-400 outline-none transition-colors"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           {/* Attack type filter */}
-          <div className="flex items-center gap-1.5 text-[12px] text-[#8B929C]">
+          <div className="flex items-center gap-2 text-xs text-slate-600">
             <span>Type:</span>
             <select
               value={typeFilter}
               onChange={(e) => handleTypeChange(e.target.value)}
-              className="bg-[#0E1013] border border-[#252A31] text-[#E6E8EB] rounded-[4px] px-2 py-1 text-[11px] outline-hidden"
+              className="bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-1.5 text-xs outline-none cursor-pointer"
             >
-              <option value="all">All types</option>
+              <option value="all">All threat types</option>
               <option value="BOLA">BOLA</option>
               <option value="token_misuse">Token misuse</option>
               <option value="scraping">Scraping</option>
@@ -169,12 +172,12 @@ export const AlertsPage: React.FC = () => {
           </div>
 
           {/* Status filter */}
-          <div className="flex items-center gap-1.5 text-[12px] text-[#8B929C]">
+          <div className="flex items-center gap-2 text-xs text-slate-600">
             <span>Status:</span>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-[#0E1013] border border-[#252A31] text-[#E6E8EB] rounded-[4px] px-2 py-1 text-[11px] outline-hidden"
+              className="bg-slate-50 border border-slate-200 text-slate-800 rounded-xl px-3 py-1.5 text-xs outline-none cursor-pointer"
             >
               <option value="all">All statuses</option>
               <option value="open">Open</option>
@@ -186,31 +189,31 @@ export const AlertsPage: React.FC = () => {
       </div>
 
       {/* Dense Alerts Table */}
-      <div className="bg-[#15181D] border border-[#252A31] rounded-[6px] overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-[12px] border-collapse">
-            <thead className="bg-[#0E1013] text-[#8B929C] sticky top-0 border-b border-[#252A31] text-[11px] select-none">
-              <tr className="h-8">
-                <th className="px-3 font-normal w-24">Severity</th>
-                <th className="px-3 font-normal w-24">ID</th>
-                <th className="px-3 font-normal">Reason / Indicator</th>
-                <th className="px-3 font-normal">Endpoint</th>
-                <th className="px-3 font-normal w-20">Actor</th>
-                <th className="px-3 font-normal w-24">OWASP</th>
-                <th className="px-3 font-normal w-20">Last seen</th>
-                <th className="px-3 font-normal w-24 text-right">Status</th>
+          <table className="w-full text-left text-xs border-collapse">
+            <thead className="bg-slate-50 text-slate-500 sticky top-0 border-b border-slate-200 text-[11px] select-none">
+              <tr className="h-9">
+                <th className="px-4 font-semibold w-24">Severity</th>
+                <th className="px-4 font-semibold w-24">ID</th>
+                <th className="px-4 font-semibold">Reason / Indicator</th>
+                <th className="px-4 font-semibold">Endpoint</th>
+                <th className="px-4 font-semibold w-20">Actor</th>
+                <th className="px-4 font-semibold w-24">OWASP</th>
+                <th className="px-4 font-semibold w-24">Last seen</th>
+                <th className="px-4 font-semibold w-24 text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#252A31]">
+            <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-[#8B929C]">
+                  <td colSpan={8} className="px-4 py-12 text-center text-slate-400 font-mono">
                     Loading alerts...
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-[#8B929C]">
+                  <td colSpan={8} className="px-4 py-12 text-center text-slate-500 font-mono">
                     No security alerts match the specified filter criteria.
                   </td>
                 </tr>
@@ -218,61 +221,60 @@ export const AlertsPage: React.FC = () => {
                 filtered.map((alert, idx) => {
                   const isSelected = idx === selectedIdx;
                   const isCritical = alert.severity === 'critical';
-                  const isTopCritical = idx === 0 && isCritical;
 
                   return (
                     <tr
                       key={alert.alert_id}
                       onClick={() => navigate(`/alerts/${alert.alert_id}`)}
                       onMouseEnter={() => setSelectedIdx(idx)}
-                      className={`h-9 cursor-pointer transition-colors ${
-                        isSelected ? 'bg-[#1C2026]' : 'hover:bg-[#1C2026]/60'
-                      } ${isTopCritical ? 'border-l-2 border-l-[#E5484D]' : ''}`}
+                      className={`h-11 cursor-pointer transition-colors ${
+                        isSelected ? 'bg-blue-50/70 border-l-2 border-l-blue-600' : 'hover:bg-slate-50'
+                      }`}
                     >
                       {/* Severity */}
-                      <td className="px-3 whitespace-nowrap">
+                      <td className="px-4 whitespace-nowrap">
                         <SeverityDot severity={alert.severity} />
                       </td>
 
                       {/* Alert ID */}
-                      <td className="px-3 font-mono text-[11px] text-[#8B929C] whitespace-nowrap">
+                      <td className="px-4 font-mono text-[11px] text-slate-500 whitespace-nowrap font-medium">
                         {alert.alert_id}
                       </td>
 
                       {/* Reason */}
-                      <td className="px-3 text-[#E6E8EB] max-w-md truncate" title={alert.reason}>
+                      <td className="px-4 text-slate-900 font-medium max-w-md truncate" title={alert.reason}>
                         {alert.reason}
                       </td>
 
                       {/* Endpoint (mono) */}
-                      <td className="px-3 font-mono text-[12px] text-[#8B929C] truncate max-w-[200px]">
+                      <td className="px-4 font-mono text-xs text-slate-600 truncate max-w-[200px]">
                         {alert.api}
                       </td>
 
                       {/* Actor (mono) */}
-                      <td className="px-3 font-mono text-[12px] text-[#8B929C] whitespace-nowrap">
+                      <td className="px-4 font-mono text-xs text-slate-700 whitespace-nowrap font-semibold">
                         {alert.actor}
                       </td>
 
                       {/* OWASP */}
-                      <td className="px-3 text-[11px] text-[#8B929C] whitespace-nowrap">
+                      <td className="px-4 text-[11px] text-slate-500 whitespace-nowrap font-mono">
                         {alert.owasp.split(' ')[0]}
                       </td>
 
                       {/* Age */}
-                      <td className="px-3 whitespace-nowrap">
+                      <td className="px-4 whitespace-nowrap text-slate-500 font-mono text-[11px]">
                         <RelativeTime timestamp={alert.last_seen} />
                       </td>
 
                       {/* Status */}
-                      <td className="px-3 text-right whitespace-nowrap">
+                      <td className="px-4 text-right whitespace-nowrap">
                         <span
-                          className={`text-[11px] px-1.5 py-0.5 rounded-[3px] border ${
+                          className={`text-[11px] px-2 py-0.5 rounded-full font-semibold border ${
                             alert.status === 'open'
-                              ? 'text-[#E5484D] border-[#E5484D]/30 bg-[#E5484D]/10'
+                              ? 'text-red-700 border-red-200 bg-red-50'
                               : alert.status === 'investigating'
-                              ? 'text-[#E5A100] border-[#E5A100]/30 bg-[#E5A100]/10'
-                              : 'text-[#8B929C] border-[#252A31] bg-[#0E1013]'
+                              ? 'text-amber-800 border-amber-200 bg-amber-50'
+                              : 'text-emerald-800 border-emerald-200 bg-emerald-50'
                           }`}
                         >
                           {alert.status}
@@ -287,11 +289,13 @@ export const AlertsPage: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2 border-t border-[#252A31] bg-[#0E1013] text-[11px] text-[#8B929C] flex items-center justify-between">
+        <div className="px-5 py-3 border-t border-slate-200 bg-slate-50 text-xs text-slate-500 flex items-center justify-between font-mono">
           <span>Showing {filtered.length} of {totalAlerts} alerts</span>
-          <span>Use <kbd className="font-mono px-1 py-0.2 rounded bg-[#15181D] border border-[#252A31]">j</kbd>/<kbd className="font-mono px-1 py-0.2 rounded bg-[#15181D] border border-[#252A31]">k</kbd> to move, <kbd className="font-mono px-1 py-0.2 rounded bg-[#15181D] border border-[#252A31]">↵</kbd> to view forensic evidence</span>
+          <span>Use <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 shadow-2xs">j</kbd>/<kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 shadow-2xs">k</kbd> to move, <kbd className="px-1.5 py-0.5 rounded bg-white border border-slate-200 shadow-2xs">↵</kbd> to view forensic evidence</span>
         </div>
       </div>
     </div>
   );
 };
+
+export default AlertsPage;

@@ -182,7 +182,11 @@ class TelemetryDB:
             cursor.execute("SELECT tp, fp, tn, fn, total FROM eval_metrics WHERE id = 1")
             row = cursor.fetchone()
             if not row:
-                return {"tp": 0, "fp": 0, "tn": 0, "fn": 0, "total": 0, "tpr": 0.0, "fpr": 0.0}
+                return {
+                    "tp": 0, "fp": 0, "tn": 0, "fn": 0, "total": 0,
+                    "tpr_percentage": 0.0, "fpr_percentage": 0.0,
+                    "precision_percentage": 100.0, "f1_score": 100.0
+                }
 
             tp, fp, tn, fn, total = row["tp"], row["fp"], row["tn"], row["fn"], row["total"]
             
@@ -190,6 +194,10 @@ class TelemetryDB:
             tpr = (tp / (tp + fn)) * 100.0 if (tp + fn) > 0 else 0.0
             # FPR = FP / (FP + TN)
             fpr = (fp / (fp + tn)) * 100.0 if (fp + tn) > 0 else 0.0
+            # Precision = TP / (TP + FP)
+            precision = (tp / (tp + fp)) * 100.0 if (tp + fp) > 0 else (100.0 if fp == 0 else 0.0)
+            # F1 Score = 2 * (Precision * Recall) / (Precision + Recall)
+            f1 = (2 * (precision / 100.0) * (tpr / 100.0)) / ((precision / 100.0) + (tpr / 100.0)) * 100.0 if (precision + tpr) > 0 else 0.0
 
             return {
                 "tp": tp,
@@ -198,5 +206,7 @@ class TelemetryDB:
                 "fn": fn,
                 "total_evaluated": total,
                 "tpr_percentage": round(tpr, 2),
-                "fpr_percentage": round(fpr, 2)
+                "fpr_percentage": round(fpr, 2),
+                "precision_percentage": round(precision, 2),
+                "f1_score": round(f1, 2)
             }

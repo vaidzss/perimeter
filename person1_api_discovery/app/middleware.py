@@ -20,6 +20,7 @@ from starlette.responses import Response
 from person1_api_discovery.app.auth import decode_jwt_token
 from person1_api_discovery.app.normalizer import normalize_path, scan_pii_fields
 from person1_api_discovery.app.inventory_service import inventory_service
+from person1_api_discovery.app.deep_inspector import deep_inspector
 
 # Thread-safe in-memory sliding buffer for fast query access (shared with Checkpoint 3 & 4)
 MAX_LOG_BUFFER_SIZE = 2000
@@ -111,6 +112,49 @@ class StructuredTelemetryMiddleware(BaseHTTPMiddleware):
         method = request.method
         query_params = dict(request.query_params)
 
+        # Early Active Defense Enforcement across all gateway endpoints
+        CONTROL_PLANE_PATHS = (
+            "/api/posture", "/api/alerts", "/api/defense", "/api/traffic",
+            "/api/evaluation", "/api/telemetry", "/api/inventory", "/api/actors",
+            "/ws", "/health", "/docs", "/openapi.json", "/redoc", "/favicon.ico"
+        )
+        is_control_plane = raw_path.startswith(CONTROL_PLANE_PATHS)
+
+        if not is_control_plane and inventory_service.is_ip_blocked(client_ip):
+            inventory_service.log_defense_action(
+                action_type="IP_BLOCK_ENFORCED",
+                target=client_ip,
+                reason="Blocked malicious IP attempt to access target system",
+                metadata={"path": raw_path, "method": method}
+            )
+            block_content = json.dumps({
+                "error": "IP_QUARANTINED_BY_PERIMETER",
+                "status": "BLOCKED",
+                "client_ip": client_ip,
+                "reason": "Host quarantined due to suspicious Tor exit node or credential replay attack.",
+                "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "mitigation": "ACTIVE_DEFENSE_ENGAGED"
+            }).encode("utf-8")
+            return Response(content=block_content, status_code=403, media_type="application/json")
+
+        normalized_path_check, _ = normalize_path(raw_path)
+        if not is_control_plane and inventory_service.is_route_quarantined(raw_path, normalized_path_check):
+            inventory_service.log_defense_action(
+                action_type="VIRTUAL_PATCH_ENFORCED",
+                target=raw_path,
+                reason="Quarantined route invocation blocked by Perimeter",
+                metadata={"client_ip": client_ip, "method": method}
+            )
+            quarantine_content = json.dumps({
+                "error": "ROUTE_QUARANTINED_BY_PERIMETER",
+                "status": "VIRTUAL_PATCH_ENFORCED",
+                "path": raw_path,
+                "reason": "Endpoint quarantined: uncataloged route with critical PII leak or privilege escalation risk.",
+                "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "mitigation": "ROUTE_ISOLATED"
+            }).encode("utf-8")
+            return Response(content=quarantine_content, status_code=403, media_type="application/json")
+
         # 2. Extract Auth Claims & Type
         auth_header = request.headers.get("authorization", "")
         auth_type = "NONE"
@@ -138,8 +182,22 @@ class StructuredTelemetryMiddleware(BaseHTTPMiddleware):
             "unlabeled"
         )
 
-        # 4. Measure request payload size
-        req_bytes = int(request.headers.get("content-length", 0))
+        # 4. Safely read and capture bounded request body sample without consuming stream
+        req_body_bytes = await request.body()
+        req_bytes = len(req_body_bytes)
+        raw_req_body_sample = req_body_bytes[:4096].decode("utf-8", errors="replace") if req_body_bytes else ""
+
+        parsed_json_body = None
+        if req_body_bytes:
+            try:
+                parsed_json_body = json.loads(req_body_bytes.decode("utf-8", errors="ignore"))
+            except Exception:
+                pass
+
+        # Re-populate request body receive channel for downstream route handlers
+        async def receive():
+            return {"type": "http.request", "body": req_body_bytes, "more_body": False}
+        request = Request(request.scope, receive=receive)
 
         # 5. Execute downstream call
         response = await call_next(request)
@@ -163,7 +221,15 @@ class StructuredTelemetryMiddleware(BaseHTTPMiddleware):
         # 8. Path normalization
         normalized_path, extracted_params = normalize_path(raw_path)
 
-        # 9. Build structured telemetry record
+        # 9. Deep Semantic Ingress Inspection (Sentinel-API Phase 2)
+        deep_result = deep_inspector.inspect_request(
+            query_params=query_params,
+            raw_body_sample=raw_req_body_sample,
+            parsed_body=parsed_json_body,
+            latency_ms=latency_ms
+        )
+
+        # 10. Build structured telemetry record
         log_entry = {
             "event_id": str(uuid.uuid4()),
             "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -185,7 +251,17 @@ class StructuredTelemetryMiddleware(BaseHTTPMiddleware):
             "pii_fields_detected": pii_fields_detected,
             "ground_truth_label": ground_truth_label,
             "raw_request_headers": dict(request.headers),
-            "raw_response_sample": res_text[:1000] if res_text else ""
+            "raw_request_body_sample": raw_req_body_sample,
+            "parsed_json_body": parsed_json_body,
+            "raw_response_sample": res_text[:1000] if res_text else "",
+            # Sentinel Phase 2 telemetry contract additions
+            "threat_indicators_detected": deep_result.threat_indicators,
+            "owasp_tags": deep_result.owasp_categories,
+            "deep_inspection_verdict": "THREAT_DETECTED" if deep_result.is_threat else "CLEAN",
+            "deep_inspection_severity": deep_result.severity,
+            "deep_inspection_reasons": deep_result.reasons,
+            "deep_inspection_details": deep_result.details,
+            "deep_inspection_latency_ms": deep_result.execution_latency_ms
         }
 
         # Define internal control-plane paths that must NOT be logged as target app traffic
@@ -206,12 +282,31 @@ class StructuredTelemetryMiddleware(BaseHTTPMiddleware):
             "/favicon.ico"
         )
         is_control_plane = raw_path.startswith(CONTROL_PLANE_PATHS)
+        already_handled = getattr(request.state, "perimeter_forwarded", False)
 
-        # 10. Non-blocking log emission & inventory ingestion ONLY for target application traffic
-        if not is_control_plane:
+        # 11. Non-blocking log emission & inventory ingestion ONLY for target application traffic
+        if not is_control_plane and not already_handled:
             append_telemetry_log(log_entry)
             try:
                 inventory_service.ingest_event(log_entry)
+
+                # Record deep semantic threat event if flagged
+                if deep_result.is_threat:
+                    inventory_service.record_deep_threat({
+                        "event_id": log_entry["event_id"],
+                        "timestamp": log_entry["timestamp"],
+                        "endpoint": normalized_path,
+                        "raw_path": raw_path,
+                        "method": method,
+                        "client_ip": client_ip,
+                        "user_id": jwt_sub,
+                        "verdict": "THREAT_DETECTED",
+                        "threat_indicators": deep_result.threat_indicators,
+                        "owasp_tags": deep_result.owasp_categories,
+                        "reasons": deep_result.reasons,
+                        "severity": deep_result.severity,
+                        "details": deep_result.details
+                    })
                 # Mirror to Person 2 Engine
                 try:
                     from person1_api_discovery.app.person2_bridge import process_mirrored_telemetry
@@ -226,6 +321,7 @@ class StructuredTelemetryMiddleware(BaseHTTPMiddleware):
                         path=raw_path,
                         query_params=query_params,
                         headers=dict(request.headers),
+                        request_body=parsed_json_body,
                         status_code=response.status_code,
                         response_body=parsed_res,
                         response_size_bytes=res_bytes,

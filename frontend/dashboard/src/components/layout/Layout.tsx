@@ -15,14 +15,13 @@ export const Layout: React.FC = () => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        setIsCommandPaletteOpen(prev => !prev);
+        setIsCommandPaletteOpen((prev) => !prev);
       }
       if (e.shiftKey && (e.key === 'D' || e.key === 'd')) {
-        // Prevent typing Shift+D into inputs triggering drawer
         const activeTag = document.activeElement?.tagName.toLowerCase();
         if (activeTag !== 'input' && activeTag !== 'textarea') {
           e.preventDefault();
-          setIsDemoDrawerOpen(prev => !prev);
+          setIsDemoDrawerOpen((prev) => !prev);
         }
       }
     };
@@ -31,25 +30,25 @@ export const Layout: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0E1013] text-[#E6E8EB] flex flex-col font-sans selection:bg-[#4C8DFF] selection:text-white">
-      {/* 40px Top bar */}
+    <div className="min-h-screen bg-[#FAFAFA] text-slate-900 flex flex-col font-sans selection:bg-blue-100 selection:text-blue-900">
+      {/* Sleek Command Center Floating Header */}
       <Header
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenDemoDrawer={() => setIsDemoDrawerOpen(true)}
       />
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Slim left nav */}
+        {/* Collapsible Command Rail Sidebar */}
         <Sidebar onOpenDemoDrawer={() => setIsDemoDrawerOpen(true)} />
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-5 overflow-y-auto max-w-[1600px] w-full">
+        {/* Main Command Operations Content Area */}
+        <main className="flex-1 p-5 lg:p-7 overflow-y-auto max-w-[1680px] w-full mx-auto bg-[#FAFAFA]">
           <Breadcrumbs />
           <Outlet />
         </main>
       </div>
 
-      {/* Freshness & scope footer */}
+      {/* Real-time Telemetry & Freshness Footer */}
       <Footer onOpenDemoDrawer={() => setIsDemoDrawerOpen(true)} />
 
       {/* Cmd+K Command Palette */}

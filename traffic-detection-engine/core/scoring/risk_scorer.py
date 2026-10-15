@@ -47,14 +47,19 @@ class RiskScorer:
         auth_header = event.headers.get("authorization", "") or event.headers.get("Authorization", "")
 
         if not auth_header and not event.jwt_sub:
-            exposure_pts = 35
-            factors.append(ReasonFactor(
-                factor="Exposure",
-                points=35,
-                description="+35 Unauthenticated Exposure",
-                owasp_category=OWASPCategory.API2_BROKEN_AUTH
-            ))
-            reason_vector_items.append("+35 Unauth")
+            # Exclude inherently public routes like login, auth, health, ifsc search from unauth exposure penalties
+            path_lower = event.path.lower()
+            if any(p in path_lower for p in ("/auth/login", "/auth/", "health", "/search/ifsc")):
+                exposure_pts = 0
+            else:
+                exposure_pts = 35
+                factors.append(ReasonFactor(
+                    factor="Exposure",
+                    points=35,
+                    description="+35 Unauthenticated Exposure",
+                    owasp_category=OWASPCategory.API2_BROKEN_AUTH
+                ))
+                reason_vector_items.append("+35 Unauth")
         elif "basic" in auth_header.lower():
             exposure_pts = 20
             factors.append(ReasonFactor(
@@ -71,6 +76,9 @@ class RiskScorer:
         # 2. PII Data Sensitivity (Max 25 points) - OWASP API3:2023
         # ---------------------------------------------------------
         pii_pts = 0
+        path_lower = event.path.lower()
+        is_auth_endpoint = any(p in path_lower for p in ("/auth/login", "/auth/", "health", "/auth/refresh"))
+
         if pii_severity == PIISeverity.CRITICAL:
             pii_pts = 25
             crit_types = [m.entity_type for m in pii_matches if m.severity == PIISeverity.CRITICAL]
@@ -83,16 +91,20 @@ class RiskScorer:
             ))
             reason_vector_items.append(f"+25 PII ({label})")
         elif pii_severity == PIISeverity.SENSITIVE:
-            pii_pts = 15
-            sens_types = [m.entity_type for m in pii_matches if m.severity == PIISeverity.SENSITIVE]
-            label = "/".join(set(sens_types)) if sens_types else "UPI/Phone"
-            factors.append(ReasonFactor(
-                factor="PII",
-                points=15,
-                description=f"+15 Sensitive PII Exposure ({label})",
-                owasp_category=OWASPCategory.API3_PROPERTY_AUTH
-            ))
-            reason_vector_items.append(f"+15 PII ({label})")
+            # Identity credentials (email/phone) transmitted during legitimate authentication are not data leaks
+            if is_auth_endpoint:
+                pii_pts = 0
+            else:
+                pii_pts = 15
+                sens_types = [m.entity_type for m in pii_matches if m.severity == PIISeverity.SENSITIVE]
+                label = "/".join(set(sens_types)) if sens_types else "UPI/Phone"
+                factors.append(ReasonFactor(
+                    factor="PII",
+                    points=15,
+                    description=f"+15 Sensitive PII Exposure ({label})",
+                    owasp_category=OWASPCategory.API3_PROPERTY_AUTH
+                ))
+                reason_vector_items.append(f"+15 PII ({label})")
 
         # ---------------------------------------------------------
         # 3. Spec Drift Status (Max 20 points) - OWASP API9:2023
@@ -192,9 +204,9 @@ class RiskScorer:
         evaluation_label = None
         if event.ground_truth and event.ground_truth.lower() not in ("unlabeled", "none", ""):
             is_predicted_threat = (
-                final_score >= 40 
+                final_score >= 35 
                 or bool(abuse_alerts) 
-                or spec_status in (SpecDriftStatus.SHADOW, SpecDriftStatus.ZOMBIE)
+                or (spec_status in (SpecDriftStatus.SHADOW, SpecDriftStatus.ZOMBIE) and final_score >= 30)
             )
             is_actual_attack = event.ground_truth.lower().startswith("attack_")
 

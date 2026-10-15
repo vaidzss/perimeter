@@ -48,7 +48,7 @@ class CoreDetectionEngine:
 
         # Box B: Runtime Abuse Detection
         self.baseline_profiler = BaselineProfiler()
-        self.bola_detector = BOLADetector(window_seconds=60.0, unique_id_threshold=5)
+        self.bola_detector = BOLADetector(window_seconds=60.0, unique_id_threshold=3)
         self.scraping_detector = ScrapingDetector(self.baseline_profiler, window_seconds=60.0)
         self.replay_detector = TokenReplayDetector(window_seconds=60.0)
 
@@ -72,9 +72,9 @@ class CoreDetectionEngine:
         parameterized_path, extracted_params = self.parameterizer.parameterize(event.path)
 
         # 2. Classify PII in response body (and request body if present)
-        pii_matches, pii_severity = self.pii_classifier.classify_payload(event.response_body)
+        pii_matches, pii_severity = self.pii_classifier.classify_payload(event.response_body, path=event.path)
         if event.request_body and pii_severity != PIISeverity.CRITICAL:
-            req_matches, req_sev = self.pii_classifier.classify_payload(event.request_body)
+            req_matches, req_sev = self.pii_classifier.classify_payload(event.request_body, path=event.path)
             if req_sev == PIISeverity.CRITICAL or (req_sev == PIISeverity.SENSITIVE and pii_severity == PIISeverity.NONE):
                 pii_matches.extend(req_matches)
                 pii_severity = req_sev
@@ -88,14 +88,18 @@ class CoreDetectionEngine:
         abuse_alerts: List[AbuseAlert] = []
         route_key = f"{event.method.upper()}:{parameterized_path}"
         client_key = event.jwt_sub or event.client_ip or "anonymous"
-        session_key = event.session_id or event.jwt_sub or event.client_ip or "anonymous_session"
+        if "/auth/login" in parameterized_path.lower():
+            session_key = f"auth_attempt_{event.request_id[:8]}"
+        else:
+            session_key = event.session_id or event.jwt_sub or event.client_ip or "anonymous_session"
 
         # 1. BOLA / IDOR Sequence Check (OWASP API1:2023)
         bola_alert = self.bola_detector.inspect(
             jwt_sub=event.jwt_sub,
             extracted_params=extracted_params,
             route=parameterized_path,
-            timestamp=event.timestamp
+            timestamp=event.timestamp,
+            jwt_jti=event.jwt_jti
         )
         if bola_alert:
             abuse_alerts.append(bola_alert)

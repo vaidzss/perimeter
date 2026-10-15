@@ -47,6 +47,10 @@ class SessionGraphEngine:
         self.valid_anchors: Set[str] = {
             "GET:/api/v2/accounts/{id}/balance",
             "GET:/api/v2/users/{id}/profile",
+            "GET:/api/v2/users/me",
+            "GET:/api/v2/auth/me",
+            "GET:/api/v2/accounts/{account_id}",
+            "GET:/api/v2/accounts/{account_id}/statements",
             "POST:/api/v2/auth/login"
         }
 
@@ -123,8 +127,10 @@ class SessionGraphEngine:
         unique_nodes_count = len(session["nodes"])
         total_steps = len(session["history"])
 
-        # If a session accesses >= 6 unique endpoints with zero repeat transitions (broad sweep)
-        if total_steps >= 6 and unique_nodes_count >= 5 and not alert:
+        # If a session accesses >= 7 unique endpoints with zero repeat transitions (broad scanner sweep)
+        # Exclude legitimate authentication login and anchor endpoints
+        is_anchor_or_auth = route_key in self.valid_anchors or any(a in route_key.lower() for a in ("/auth/login", "/auth/"))
+        if total_steps >= 7 and unique_nodes_count >= 6 and not alert and not is_anchor_or_auth:
             # Calculate node entropy
             probs = [count / total_steps for count in session["nodes"].values()]
             entropy = -sum(p * math.log2(p) for p in probs)

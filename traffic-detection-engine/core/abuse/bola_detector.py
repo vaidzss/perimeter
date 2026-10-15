@@ -34,7 +34,8 @@ class BOLADetector:
                 jwt_sub: Optional[str], 
                 extracted_params: Dict[str, str], 
                 route: str, 
-                timestamp: Optional[float] = None) -> Optional[AbuseAlert]:
+                timestamp: Optional[float] = None,
+                jwt_jti: Optional[str] = None) -> Optional[AbuseAlert]:
         """
         Inspects incoming request for BOLA/IDOR behavior.
         Returns AbuseAlert if anomalous object enumeration is detected.
@@ -43,8 +44,10 @@ class BOLADetector:
         if not jwt_sub or not extracted_params:
             return None
 
+        sub_key = f"{jwt_sub}:{jwt_jti}" if jwt_jti else jwt_sub
+
         now = timestamp if timestamp is not None else time.time()
-        self._purge_old_entries(jwt_sub, now)
+        self._purge_old_entries(sub_key, now)
 
         # Primary object identifier (e.g., id, account_id, user_id)
         primary_id = None
@@ -56,13 +59,13 @@ class BOLADetector:
             # Fall back to first extracted param
             primary_id = next(iter(extracted_params.values()))
 
-        if jwt_sub not in self.user_history:
-            self.user_history[jwt_sub] = deque()
+        if sub_key not in self.user_history:
+            self.user_history[sub_key] = deque()
 
-        self.user_history[jwt_sub].append((now, str(primary_id), route))
+        self.user_history[sub_key].append((now, str(primary_id), route))
 
         # Calculate metrics in the 60s sliding window
-        window_events = self.user_history[jwt_sub]
+        window_events = self.user_history[sub_key]
         unique_ids = set(item[1] for item in window_events)
         total_requests = len(window_events)
         unique_count = len(unique_ids)

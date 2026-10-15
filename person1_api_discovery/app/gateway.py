@@ -21,6 +21,8 @@ from starlette.responses import JSONResponse, Response as StarletteResponse
 
 from person1_api_discovery.app.inventory_service import inventory_service
 from person1_api_discovery.app.normalizer import normalize_path, scan_pii_fields
+from person1_api_discovery.app.middleware import RECENT_TELEMETRY_LOGS
+from person1_api_discovery.app.deep_inspector import deep_inspector
 
 UPSTREAM_TARGET = os.getenv("UPSTREAM_TARGET", "http://127.0.0.1:8001")
 
@@ -45,6 +47,162 @@ def mask_sensitive_pii(text: str) -> str:
     # Mask PAN: ABCDE1234F -> ABCDE****F
     masked = RE_PAN.sub(r'\1****\3', masked)
     return masked
+
+
+def record_gateway_telemetry(
+    request: Request,
+    event_id: str,
+    method: str,
+    raw_path: str,
+    normalized_path: str,
+    path_params: dict,
+    client_ip: str,
+    user_agent: str,
+    status_code: int,
+    req_bytes: int,
+    res_bytes: int,
+    latency_ms: float,
+    pii_fields: list,
+    res_sample: str,
+    parsed_json_body: Any = None,
+    request_body: Any = None,
+    raw_req_body_sample: str = ""
+):
+    # Extract auth details from request headers
+    auth_header = request.headers.get("authorization", "")
+    auth_type = "NONE"
+    jwt_sub = None
+    jwt_jti = None
+    if auth_header.lower().startswith("bearer "):
+        auth_type = "JWT_BEARER"
+        try:
+            import jwt
+            token = auth_header.split(" ")[1]
+            unverified = jwt.decode(token, options={"verify_signature": False})
+            jwt_sub = unverified.get("sub") or unverified.get("user_id")
+            jwt_jti = unverified.get("jti")
+        except Exception:
+            pass
+    elif "x-debug-key" in request.headers or "x-api-key" in request.headers:
+        auth_type = "API_KEY"
+
+    explicit_gt = request.headers.get("x-ground-truth") or request.headers.get("x-truth")
+    if explicit_gt:
+        ground_truth = explicit_gt
+    else:
+        if client_ip in {"185.220.101.5", "185.220.101.6"} or "python-requests" in user_agent.lower():
+            ground_truth = "attack_replay"
+        elif "aadhaar-pan-dump" in raw_path:
+            ground_truth = "attack_zombie_pii"
+        elif "debug" in raw_path or "override-limit" in raw_path:
+            ground_truth = "attack_shadow"
+        elif "/accounts/" in raw_path and (jwt_sub and not raw_path.endswith(f"/{jwt_sub}")):
+            ground_truth = "attack_bola"
+        elif "/auth/login" in raw_path:
+            ground_truth = "legitimate_auth"
+        else:
+            ground_truth = "unlabeled"
+
+    # Deep Semantic Ingress Inspection (Sentinel-API Phase 2)
+    deep_result = deep_inspector.inspect_request(
+        query_params=dict(request.query_params),
+        raw_body_sample=raw_req_body_sample,
+        parsed_body=request_body,
+        latency_ms=latency_ms
+    )
+
+    telemetry_event = {
+        "event_id": event_id,
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "client_ip": client_ip,
+        "user_agent": user_agent,
+        "method": method,
+        "raw_path": raw_path,
+        "normalized_path": normalized_path,
+        "query_params": dict(request.query_params),
+        "path_params_extracted": path_params,
+        "auth_type": auth_type,
+        "jwt_sub": jwt_sub,
+        "jwt_role": "customer",
+        "jwt_jti": jwt_jti,
+        "status_code": status_code,
+        "req_bytes": req_bytes,
+        "res_bytes": res_bytes,
+        "latency_ms": latency_ms,
+        "pii_fields_detected": pii_fields,
+        "ground_truth_label": ground_truth,
+        "raw_request_body_sample": raw_req_body_sample,
+        "parsed_json_body": request_body,
+        "raw_response_sample": res_sample[:1000] if res_sample else "",
+        # Sentinel Phase 2 telemetry contract additions
+        "threat_indicators_detected": deep_result.threat_indicators,
+        "owasp_tags": deep_result.owasp_categories,
+        "deep_inspection_verdict": "THREAT_DETECTED" if deep_result.is_threat else "CLEAN",
+        "deep_inspection_severity": deep_result.severity,
+        "deep_inspection_reasons": deep_result.reasons,
+        "deep_inspection_details": deep_result.details,
+        "deep_inspection_latency_ms": deep_result.execution_latency_ms
+    }
+
+    # In-memory buffer for dashboard actor/request queries
+    RECENT_TELEMETRY_LOGS.append(telemetry_event)
+
+    # Emit to telemetry_stream.jsonl
+    log_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "logs"))
+    os.makedirs(log_dir, exist_ok=True)
+    log_file = os.path.join(log_dir, "telemetry_stream.jsonl")
+    try:
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(telemetry_event) + "\n")
+    except Exception as e:
+        print(f"[Perimeter Gateway] Log emittance error: {e}")
+
+    # Ingest directly into InventoryService
+    inventory_service.ingest_event(telemetry_event)
+
+    if deep_result.is_threat:
+        inventory_service.record_deep_threat({
+            "event_id": event_id,
+            "timestamp": telemetry_event["timestamp"],
+            "endpoint": normalized_path,
+            "raw_path": raw_path,
+            "method": method,
+            "client_ip": client_ip,
+            "user_id": jwt_sub,
+            "verdict": "THREAT_DETECTED",
+            "threat_indicators": deep_result.threat_indicators,
+            "owasp_tags": deep_result.owasp_categories,
+            "reasons": deep_result.reasons,
+            "severity": deep_result.severity,
+            "details": deep_result.details
+        })
+
+    # Mirror into Person 2 Traffic Detection & Abuse Engine
+    risk_score_obj = None
+    try:
+        from person1_api_discovery.app.person2_bridge import process_mirrored_telemetry
+        risk_score_obj, p2_lat = process_mirrored_telemetry(
+            request_id=event_id,
+            method=method,
+            path=raw_path,
+            query_params=dict(request.query_params),
+            headers=dict(request.headers),
+            request_body=request_body,
+            status_code=status_code,
+            response_body=parsed_json_body,
+            response_size_bytes=res_bytes,
+            client_ip=client_ip,
+            user_agent=user_agent,
+            jwt_sub=jwt_sub,
+            jwt_jti=jwt_jti,
+            ground_truth=ground_truth
+        )
+    except Exception as e:
+        print(f"[Perimeter Gateway] Person 2 engine error: {e}")
+
+    # Mark request as handled so middleware doesn't duplicate
+    request.state.perimeter_forwarded = True
+    return risk_score_obj
 
 
 async def forward_through_perimeter(request: Request) -> Response:
@@ -76,17 +234,32 @@ async def forward_through_perimeter(request: Request) -> Response:
             reason="Blocked malicious IP attempt to access target system",
             metadata={"path": raw_path, "method": method}
         )
-        return JSONResponse(
+        block_content = {
+            "error": "IP_QUARANTINED_BY_PERIMETER",
+            "status": "BLOCKED",
+            "client_ip": client_ip,
+            "reason": "Host quarantined due to suspicious Tor exit node or credential replay attack.",
+            "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "mitigation": "ACTIVE_DEFENSE_ENGAGED"
+        }
+        record_gateway_telemetry(
+            request=request,
+            event_id=event_id,
+            method=method,
+            raw_path=raw_path,
+            normalized_path=normalized_path,
+            path_params=path_params,
+            client_ip=client_ip,
+            user_agent=user_agent,
             status_code=403,
-            content={
-                "error": "IP_QUARANTINED_BY_PERIMETER",
-                "status": "BLOCKED",
-                "client_ip": client_ip,
-                "reason": "Host quarantined due to suspicious Tor exit node or credential replay attack.",
-                "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                "mitigation": "ACTIVE_DEFENSE_ENGAGED"
-            }
+            req_bytes=0,
+            res_bytes=len(json.dumps(block_content)),
+            latency_ms=round((time.perf_counter() - start_time) * 1000, 2),
+            pii_fields=[],
+            res_sample=json.dumps(block_content),
+            parsed_json_body=block_content
         )
+        return JSONResponse(status_code=403, content=block_content)
 
     # -------------------------------------------------------------
     # 2. ACTIVE DEFENSE: Route Quarantine / Virtual Patching
@@ -98,17 +271,32 @@ async def forward_through_perimeter(request: Request) -> Response:
             reason="Quarantined route invocation blocked by Perimeter",
             metadata={"client_ip": client_ip, "method": method}
         )
-        return JSONResponse(
+        quarantine_content = {
+            "error": "ROUTE_QUARANTINED_BY_PERIMETER",
+            "status": "VIRTUAL_PATCH_ENFORCED",
+            "path": raw_path,
+            "reason": "Endpoint quarantined: uncataloged route with critical PII leak or privilege escalation risk.",
+            "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "mitigation": "ROUTE_ISOLATED"
+        }
+        record_gateway_telemetry(
+            request=request,
+            event_id=event_id,
+            method=method,
+            raw_path=raw_path,
+            normalized_path=normalized_path,
+            path_params=path_params,
+            client_ip=client_ip,
+            user_agent=user_agent,
             status_code=403,
-            content={
-                "error": "ROUTE_QUARANTINED_BY_PERIMETER",
-                "status": "VIRTUAL_PATCH_ENFORCED",
-                "path": raw_path,
-                "reason": "Endpoint quarantined: uncataloged route with critical PII leak or privilege escalation risk.",
-                "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                "mitigation": "ROUTE_ISOLATED"
-            }
+            req_bytes=0,
+            res_bytes=len(json.dumps(quarantine_content)),
+            latency_ms=round((time.perf_counter() - start_time) * 1000, 2),
+            pii_fields=[],
+            res_sample=json.dumps(quarantine_content),
+            parsed_json_body=quarantine_content
         )
+        return JSONResponse(status_code=403, content=quarantine_content)
 
     # -------------------------------------------------------------
     # 3. Upstream Forwarding to Target System
@@ -165,91 +353,45 @@ async def forward_through_perimeter(request: Request) -> Response:
     # -------------------------------------------------------------
     # 5. Dual Telemetry Logging & Inventory Ingestion
     # -------------------------------------------------------------
-    # Extract auth details from request headers
-    auth_header = request.headers.get("authorization", "")
-    auth_type = "NONE"
-    jwt_sub = None
-    jwt_jti = None
-    if auth_header.lower().startswith("bearer "):
-        auth_type = "JWT_BEARER"
+    parsed_body = None
+    try:
+        parsed_body = json.loads(final_res_bytes.decode("utf-8", errors="ignore"))
+    except Exception:
+        pass
+
+    parsed_req_body = None
+    raw_req_body_sample = body_bytes[:4096].decode("utf-8", errors="replace") if body_bytes else ""
+    if body_bytes:
         try:
-            import jwt
-            token = auth_header.split(" ")[1]
-            unverified = jwt.decode(token, options={"verify_signature": False})
-            jwt_sub = unverified.get("sub") or unverified.get("user_id")
-            jwt_jti = unverified.get("jti")
+            parsed_req_body = json.loads(body_bytes.decode("utf-8", errors="ignore"))
         except Exception:
             pass
-    elif "x-debug-key" in request.headers:
-        auth_type = "API_KEY"
 
-    telemetry_event = {
-        "event_id": event_id,
-        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "client_ip": client_ip,
-        "user_agent": user_agent,
-        "method": method,
-        "raw_path": raw_path,
-        "normalized_path": normalized_path,
-        "query_params": dict(request.query_params),
-        "path_params_extracted": path_params,
-        "auth_type": auth_type,
-        "jwt_sub": jwt_sub,
-        "jwt_role": "customer",
-        "jwt_jti": jwt_jti,
-        "status_code": status_code,
-        "req_bytes": len(body_bytes),
-        "res_bytes": len(final_res_bytes),
-        "latency_ms": latency_ms,
-        "pii_fields_detected": pii_fields,
-        "ground_truth_label": request.headers.get("x-ground-truth", "unlabeled"),
-        "raw_response_sample": final_res_bytes[:1000].decode("utf-8", errors="ignore")
-    }
-
-    # Emit to telemetry_stream.jsonl
-    log_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "logs"))
-    os.makedirs(log_dir, exist_ok=True)
-    log_file = os.path.join(log_dir, "telemetry_stream.jsonl")
-    try:
-        with open(log_file, "a", encoding="utf-8") as f:
-            f.write(json.dumps(telemetry_event) + "\n")
-    except Exception as e:
-        print(f"[Perimeter Gateway] Log emittance error: {e}")
+    risk_score_obj = record_gateway_telemetry(
+        request=request,
+        event_id=event_id,
+        method=method,
+        raw_path=raw_path,
+        normalized_path=normalized_path,
+        path_params=path_params,
+        client_ip=client_ip,
+        user_agent=user_agent,
+        status_code=status_code,
+        req_bytes=len(body_bytes),
+        res_bytes=len(final_res_bytes),
+        latency_ms=latency_ms,
+        pii_fields=pii_fields,
+        res_sample=final_res_bytes.decode("utf-8", errors="ignore"),
+        parsed_json_body=parsed_body,
+        request_body=parsed_req_body,
+        raw_req_body_sample=raw_req_body_sample
+    )
 
     # Initialize response headers dictionary
     resp_headers = {k: v for k, v in upstream_res.headers.items() if k.lower() not in {"content-length", "content-encoding", "transfer-encoding"}}
-
-    # Ingest directly into InventoryService
-    inventory_service.ingest_event(telemetry_event)
-
-    # Mirror into Person 2 Traffic Detection & Abuse Engine
-    try:
-        from person1_api_discovery.app.person2_bridge import process_mirrored_telemetry
-        parsed_body = None
-        try:
-            parsed_body = json.loads(final_res_bytes.decode("utf-8", errors="ignore"))
-        except Exception:
-            pass
-
-        risk_score, p2_lat = process_mirrored_telemetry(
-            request_id=event_id,
-            method=method,
-            path=raw_path,
-            query_params=dict(request.query_params),
-            headers=dict(request.headers),
-            status_code=status_code,
-            response_body=parsed_body,
-            response_size_bytes=len(final_res_bytes),
-            client_ip=client_ip,
-            user_agent=user_agent,
-            jwt_sub=jwt_sub,
-            jwt_jti=jwt_jti,
-            ground_truth=request.headers.get("x-ground-truth") or request.headers.get("x-truth")
-        )
-        resp_headers["X-Perimeter-Risk-Score"] = str(risk_score.risk_score)
-        resp_headers["X-Perimeter-Severity"] = risk_score.severity
-    except Exception as e:
-        print(f"[Perimeter Gateway] Person 2 engine error: {e}")
+    if risk_score_obj:
+        resp_headers["X-Perimeter-Risk-Score"] = str(risk_score_obj.risk_score)
+        resp_headers["X-Perimeter-Severity"] = risk_score_obj.severity
 
     # Return response to client
     resp_headers["X-Perimeter-Protected"] = "true"
