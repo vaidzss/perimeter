@@ -203,10 +203,11 @@ class RiskScorer:
         # Evaluation against simulation ground truth if provided
         evaluation_label = None
         if event.ground_truth and event.ground_truth.lower() not in ("unlabeled", "none", ""):
+            has_actionable_alert = any(a.severity in ("HIGH", "CRITICAL") for a in abuse_alerts)
             is_predicted_threat = (
-                final_score >= 35 
-                or bool(abuse_alerts) 
-                or (spec_status in (SpecDriftStatus.SHADOW, SpecDriftStatus.ZOMBIE) and final_score >= 30)
+                final_score >= 50 
+                or has_actionable_alert 
+                or (spec_status in (SpecDriftStatus.SHADOW, SpecDriftStatus.ZOMBIE) and final_score >= 45)
             )
             is_actual_attack = event.ground_truth.lower().startswith("attack_")
 

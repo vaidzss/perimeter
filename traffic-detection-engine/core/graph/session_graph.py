@@ -48,9 +48,15 @@ class SessionGraphEngine:
             "GET:/api/v2/accounts/{id}/balance",
             "GET:/api/v2/users/{id}/profile",
             "GET:/api/v2/users/me",
+            "PUT:/api/v2/users/me/contact",
             "GET:/api/v2/auth/me",
             "GET:/api/v2/accounts/{account_id}",
             "GET:/api/v2/accounts/{account_id}/statements",
+            "GET:/api/v2/accounts/{account_id}/transactions",
+            "POST:/api/v2/accounts/beneficiaries",
+            "GET:/api/v2/transactions/{id}/receipt",
+            "GET:/api/v2/transactions/{txn_id}/receipt",
+            "POST:/api/v2/payments/upi-transfer",
             "POST:/api/v2/auth/login"
         }
 
