@@ -47,7 +47,7 @@ Comprehensive documentation is available in the [`docs/`](docs/) directory:
 * **[Executive Overview & Problem Statement](docs/overview.md):** The "Shadow Surface Dilemma", OWASP API Top 10 vulnerabilities, and core value proposition.
 * **[System Architecture & Technical Specs](docs/architecture.md):** Decoupled microservice topology, Mermaid request lifecycles, and component specifications.
 * **[Feasibility, Performance & Compliance Analysis](docs/feasibility.md):** Sub-2ms latency profile, Welford $O(1)$ complexity, economic ROI, and DPDP / RBI compliance.
-* **[Red-Team Cyberattack & Simulation Guide](docs/simulation.md):** Multi-vector cyberattack simulation, step-by-step reproduction guide, and before-vs-after verification matrix.
+* **[Red-Team Cyberattack & Simulation Guide](docs/simulation.md):** 8-scenario red-team cyberattack simulation guide covering OWASP API Top 10, deep payload inspection, supply chain defense, and before-vs-after verification matrix.
 * **[REST API Reference](docs/api_reference.md):** Full documentation of Perimeter Control-Plane and Ingress Gateway endpoints, payloads, and WebSocket streams.
 
 ---
@@ -128,7 +128,7 @@ perimeter/
 │   ├── overview.md                # Problem Statement & Executive Overview
 │   ├── architecture.md            # Topology, Sequence Diagrams & Lifecycles
 │   ├── feasibility.md             # Sub-2ms Latency, Welford O(1), DPDP/RBI Compliance
-│   ├── simulation.md              # 4 Attack Vectors, Red-Team & Defense Guide
+│   ├── simulation.md              # 8 Attack Vectors & Scenarios, Red-Team & Active Defense Guide
 │   └── api_reference.md           # Full REST API Reference & WebSocket Specs
 │
 ├── person1_api_discovery/         # Person 1: Gateway & Discovery Platform

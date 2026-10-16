@@ -151,14 +151,19 @@ flowchart LR
 ---
 
 ### Slide 10: Live Demonstration: BharatPay Core Banking Defense
-#### Real-World Target Protection Across 5 Realistic FinTech Scenarios
+#### Real-World Target Protection Across 8 Realistic FinTech Scenarios
 
 | Scenario | Target Without Perimeter | Target Protected by Perimeter | Protection Mechanism |
 | :--- | :--- | :--- | :--- |
 | **Zombie KYC Dump** (`/api/v1/kyc/aadhaar-pan-dump`) | **HTTP 200 OK**<br>Exfiltrated raw Aadhaar & PAN | **HTTP 403 Forbidden**<br>Zero records leaked | `ROUTE_QUARANTINED_BY_PERIMETER` |
 | **Shadow Limit Backdoor** (`/api/internal/debug/override-limit`) | **HTTP 200 OK**<br>Daily limit raised to ₹2 Crore | **HTTP 403 Forbidden**<br>Tamper attempt rejected | `ROUTE_QUARANTINED_BY_PERIMETER` |
-| **Cross-Region Snooping** (`/api/v2/internal/reports/regional-sales`) | **HTTP 200 OK**<br>West manager reads East data | **HTTP 403 Forbidden**<br>Jurisdiction scope enforced | Role & Scope Access Boundary |
-| **Stolen Token in Diwali** (`VP Sales` token at 3:00 AM) | **HTTP 200 OK**<br>Blends into Diwali volume | **Flagged CRITICAL (95/100)**<br>Token quarantined | `PRIORITY_IDENTITY_ANOMALY` |
+| **BOLA / IDOR Sweep** (`/api/v2/accounts/{id}/statement`) | **HTTP 200 OK**<br>Exposed unauthorized customer records | **HTTP 403 / Flagged >80**<br>Immediate SOC Alert | Box B Welford Statistical Profiler |
+| **Tor Botnet Token Replay** (`/api/v2/payments/upi-transfer`) | **HTTP 200 OK**<br>Fraudulent wire transfer sent | **HTTP 403 Forbidden**<br>Dropped at edge | `IP_QUARANTINED_BY_PERIMETER` |
+| **Cloud SSRF Probe** (`/api/v2/users/me/webhook-avatar`) | **HTTP 200 OK**<br>AWS/GCP metadata & loopback env exposed | **HTTP 403 / 502 Blocked**<br>Disallowed internal target | `SSRFInspector` (Link-Local & RFC1918 Filter) |
+| **Negative Amount Exploit** (`/api/v2/payments/upi-transfer`) | **HTTP 200 OK**<br>Balance fraudulently inflated | **HTTP 400 Bad Request**<br>Arithmetic exploit rejected | `BusinessLogicInspector` |
+| **ReDoS & Depth Bomb** (`/api/v2/accounts/import-statement`) | **Server Hang / DoS**<br>Workers pinned at 100% CPU | **Sub-1ms Rejection**<br>Backtracking defused safely | `ComplexityAndReDoSInspector` |
+| **Supply-Chain Poisoning** (`/api/v2/payments/fx-rate`) | **HTTP 200 OK**<br>Poisoned feed stored in DB | **HTTP 502 Bad Gateway**<br>Vendor payload intercepted | `SafeExternalAPIClient` (Egress Guard) |
+| **Data in Transit (DPDP/RBI)** | **Plaintext Leak** | **Sanitized In-Flight**<br>`9999-XXXX-1001`, `ABCDE****F` | Inline PII Masking Engine |
 | **Legitimate User (Priya Sharma)** | **HTTP 200 OK** | **HTTP 200 OK** | Seamless Pass-Through (0 False Positives) |
 
 ---
