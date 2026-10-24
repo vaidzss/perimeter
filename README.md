@@ -524,5 +524,5 @@ The Perimeter codebase is licensed under the **Apache License 2.0** (see [LICENS
 ## 19. Team & Metadata
 
 * **Repository:** [https://github.com/vaidzss/perimeter](https://github.com/vaidzss/perimeter)
-* **Lead Maintainer:** [@vaidzss](https://github.com/vaidzss)
+* **Developers:** [@vaidzss](https://github.com/vaidzss) [@Vatts](https://github.com/VattsKumarMishra) [@Garvit](https://github.com/Garvitsisodia333)
 * **Contact:** Through GitHub Issues or verified profile communication.
