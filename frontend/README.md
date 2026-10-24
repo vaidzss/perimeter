@@ -1,9 +1,9 @@
-# Perimeter — CYBERCUP 2026
+# Perimeter SOC Command Center & Target Neobank
 ## Autonomous API Security Posture Management & Active Threat Neutralization
 
 A full-stack, enterprise-grade API Security Posture Management (ASPM) platform and active defense system designed for modern microservice environments. 
 
-Sentinel detects the #1 OWASP API vulnerability—**Broken Object Level Authorization (BOLA/IDOR)**—uncovers uncataloged **Shadow & Zombie APIs**, monitors **OpenAPI specification drift**, inspects raw HTTP forensics, and executes **autonomous zero-downtime virtual patching**.
+Perimeter detects the #1 OWASP API vulnerability—**Broken Object Level Authorization (BOLA/IDOR)**—uncovers uncataloged **Shadow & Zombie APIs**, monitors **OpenAPI specification drift**, inspects raw HTTP forensics, and executes **autonomous zero-downtime virtual patching**.
 
 ---
 
@@ -46,8 +46,8 @@ Sentinel detects the #1 OWASP API vulnerability—**Broken Object Level Authoriz
    - **Actor Global Blast Radius & Lateral Activity:** Comprehensive audit trail of every other microservice probed or exploited by this actor during the session.
 
 7. **Deliverables in Dashboard & Project:**
-   - **Interactive Pitch Deck (`/pitch`):** Full 10-slide investor & judge presentation inside the dashboard (also formatted in [PITCH_DECK.md](file:///D:/CYBERCUP%20PROJECT/PITCH_DECK.md)).
-   - **5-Minute Live-Attack Demo Script (`/demo`):** Director's cue sheet with exact minute-by-minute talking points, clickable demo triggers, and backup terminal commands (also formatted in [LIVE_ATTACK_DEMO_SCRIPT.md](file:///D:/CYBERCUP%20PROJECT/LIVE_ATTACK_DEMO_SCRIPT.md)).
+   - **Interactive Pitch Deck (`/pitch`):** Full 10-slide investor & judge presentation inside the dashboard (also formatted in [PITCH_DECK.md](PITCH_DECK.md)).
+   - **5-Minute Live-Attack Demo Script (`/demo`):** Director's cue sheet with exact minute-by-minute talking points, clickable demo triggers, and backup terminal commands (also formatted in [LIVE_ATTACK_DEMO_SCRIPT.md](LIVE_ATTACK_DEMO_SCRIPT.md)).
 
 ---
 
@@ -55,7 +55,7 @@ Sentinel detects the #1 OWASP API vulnerability—**Broken Object Level Authoriz
 
 ### 1. Backend REST API Server (Port 5000)
 ```bash
-cd "D:\CYBERCUP PROJECT\backend"
+cd backend
 npm install
 node server.js
 ```
@@ -75,7 +75,7 @@ The REST API runs on `http://localhost:5000`:
 
 ### 2. Frontend React SOC Console (Port 3000)
 ```bash
-cd "D:\CYBERCUP PROJECT\dashboard"
+cd dashboard
 npm install
 npm run dev
 ```

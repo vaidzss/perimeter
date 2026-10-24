@@ -1,5 +1,5 @@
 # 5-MINUTE LIVE-ATTACK DEMO SCRIPT
-## CyberCup 2026: Sentinel API Defense Live Demonstration Guide
+## Perimeter API Defense Live Demonstration Guide
 
 **Presenter:** Alex Vance (Lead Presenter)  
 **Co-Presenter / Demo Operator:** Live Console Pilot  

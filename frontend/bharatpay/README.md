@@ -1,5 +1,5 @@
 # BharatPay — Fictional Neobank & UPI Target System
-> **Target System for Hackathon Project CC6-IC07: API Discovery, Security and Abuse Prevention**  
+> **Target Neobank & Vulnerable API Testbed for Perimeter ASPM & Inline Active Defense**  
 > *Notice: All accounts, balances, Aadhaar, PAN, and transactions in this application are 100% synthetic test data.*
 
 ---
@@ -77,7 +77,7 @@ All test accounts use the password: `Password@123` (or test OTP stub `123456`).
 ## 🎯 How Person 1 & 2's Pipeline Connects
 
 ### 1. For Person 1: API Discovery & Shadow API Detection
-- **Ground Truth Catalog**: Point your catalog comparator at [`spec/openapi.json`](file:///D:/CYBERCUP%20PROJECT/bharatpay/spec/openapi.json). This file documents only the 4 public routes.
+- **Ground Truth Catalog**: Point your catalog comparator at [`spec/openapi.json`](spec/openapi.json). This file documents only the 4 public routes.
 - **Log Feeds to Ingest**:
   - Gateway Log: `./logs/nginx_access.log` (JSON format with `$request_uri`, `$status`, `$upstream_response_time`).
   - Application Telemetry: `./logs/requests.jsonl` (contains `path_template` and `raw_path`).

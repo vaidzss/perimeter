@@ -2,7 +2,7 @@
 
 ## 1. Executive Summary
 
-**Perimeter** (Project CC6-IC07) is an enterprise-grade, autonomous **Application Security Posture Management (ASPM) and Inline Active Defense Platform** designed specifically for high-velocity FinTech and microservice architectures.
+**Perimeter** (API Security Posture Management) is an enterprise-grade, autonomous **Application Security Posture Management (ASPM) and Inline Active Defense Platform** designed specifically for high-velocity FinTech and microservice architectures.
 
 Modern cloud-native financial platforms frequently suffer from the **"Shadow Surface Dilemma"**: rapid CI/CD deployment cycles create undocumented, legacy, and shadow API endpoints that bypass security controls. These unmanaged routes expose critical vulnerabilities—predominantly **Broken Object Level Authorization (BOLA/IDOR)** and **Unrestricted Mass PII Exfiltration**—which traditional perimeter firewalls (WAFs) and static API gateways fail to detect or mitigate.
 

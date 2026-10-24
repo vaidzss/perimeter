@@ -30,7 +30,7 @@ flowchart LR
 
 ## 2. Technical Mechanics of the Graph Engine
 
-Located in [`traffic-detection-engine/core/graph/session_graph.py`](file:///C:/Users/vaidz/perimeter/traffic-detection-engine/core/graph/session_graph.py), the engine executes continuously in under **0.05ms** per request:
+Located in [`traffic-detection-engine/core/graph/session_graph.py`](../traffic-detection-engine/core/graph/session_graph.py), the engine executes continuously in under **0.05ms** per request:
 
 ### 1. In-Memory Session DAG Maintenance
 * **Session Key Identification:** Correlates requests using `session_id`, `jwt_sub`, or authenticated client IP.

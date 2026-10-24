@@ -1,4 +1,5 @@
-# CC6-IC07 Layer 2: Core Discovery, Abuse Detection & Risk Engine
+# Perimeter Traffic Detection Engine
+## Real-Time API Discovery, Abuse Detection, Session Graphing & Risk Scoring
 
 An asynchronous, non-blocking telemetry engine for real-time API discovery, shadow/zombie route detection, OWASP Top 10 threat prevention, context-aware session graphing, and explainable risk scoring.
 

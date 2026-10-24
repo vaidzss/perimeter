@@ -1,7 +1,7 @@
-# PERIMETER: CyberCup 2026 Executive Pitch Deck & Presentation Strategy
+# PERIMETER: Executive Presentation & Architecture Pitch Deck
 
 > **Autonomous API Security Posture Management (ASPM) & Inline Active Defense Mesh**  
-> *Project CC6-IC07 | Target: FinTech, Neobanks, Open Banking & Cloud-Native Enterprises*
+> *Target: FinTech, Neobanks, Open Banking & Cloud-Native Enterprises*
 
 ---
 

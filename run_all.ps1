@@ -5,31 +5,33 @@ Write-Host "==========================================================" -Foregro
 Write-Host "   Starting Perimeter (ASPM) & BharatPay Platform        " -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
 
+$RepoRoot = if ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
+
 # 1. Stop conflicting Docker containers if running
 Write-Host "[1/5] Stopping any conflicting Docker containers on Port 8000..." -ForegroundColor Yellow
 docker stop bharatpay-backend bharatpay-frontend bharatpay-gateway 2>$null | Out-Null
 
 # 2. Terminal 1: BharatPay Backend (Port 8001)
 Write-Host "[2/5] Launching BharatPay Banking Backend (Port 8001)..." -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd 'D:\perimeter\frontend\bharatpay\backend'; python -m uvicorn app.main:app --host 0.0.0.0 --port 8001"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$RepoRoot\frontend\bharatpay\backend'; python -m uvicorn app.main:app --host 0.0.0.0 --port 8001"
 
 Start-Sleep -Seconds 2
 
 # 3. Terminal 2: Perimeter ASPM Security Gateway (Port 8000)
 Write-Host "[3/5] Launching Perimeter Security Gateway (Port 8000)..." -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd 'D:\perimeter'; python -m uvicorn person1_api_discovery.app.main:app --host 0.0.0.0 --port 8000"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$RepoRoot'; python -m uvicorn person1_api_discovery.app.main:app --host 0.0.0.0 --port 8000"
 
 Start-Sleep -Seconds 2
 
 # 4. Terminal 3: Perimeter SOC Console (Port 3000)
 Write-Host "[4/5] Launching Perimeter SOC Console (Port 3000)..." -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd 'D:\perimeter\frontend\dashboard'; npm run dev"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$RepoRoot\frontend\dashboard'; npm run dev"
 
 Start-Sleep -Seconds 2
 
 # 5. Terminal 4: BharatPay Customer Web Portal (Port 5173)
 Write-Host "[5/5] Launching BharatPay Customer Web Portal (Port 5173)..." -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd 'D:\perimeter\frontend\bharatpay\frontend'; npm run dev"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd '$RepoRoot\frontend\bharatpay\frontend'; npm run dev"
 
 Start-Sleep -Seconds 3
 

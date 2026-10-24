@@ -113,7 +113,7 @@ sequenceDiagram
   4. **Tor Botnet Token Replay (`POST /api/v2/payments/upi-transfer`):** Sensitive fund transfer route vulnerable to stolen JWT replay from known Tor exit nodes and automated user agents.
 
 ### Component 2: Inline Security Gateway & Active Defense Engine
-* **Location:** [`person1_api_discovery/app/gateway.py`](file:///C:/Users/vaidz/perimeter/person1_api_discovery/app/gateway.py) & [`person1_api_discovery/app/routers/defense_router.py`](file:///C:/Users/vaidz/perimeter/person1_api_discovery/app/routers/defense_router.py).
+* **Location:** [`person1_api_discovery/app/gateway.py`](../person1_api_discovery/app/gateway.py) & [`person1_api_discovery/app/routers/defense_router.py`](../person1_api_discovery/app/routers/defense_router.py).
 * **Port:** 8000 (Central Ingress).
 * **Key Responsibilities:**
   * **Reverse-Proxy Routing:** Proxies all unrouted requests (`/api/{path:path}`) dynamically to the upstream backend (`http://localhost:8001`), maintaining persistent HTTP connection pools.
@@ -123,7 +123,7 @@ sequenceDiagram
   * **Defense Audit Logger:** Maintains a tamper-evident in-memory and SQLite audit log of every enforcement decision (`VIRTUAL_PATCH_ENFORCED`, `IP_BLOCK_ENFORCED`, `PII_MASKED`).
 
 ### Component 3: API Discovery & Inventory Management (Person 1)
-* **Location:** [`person1_api_discovery/app/inventory_service.py`](file:///C:/Users/vaidz/perimeter/person1_api_discovery/app/inventory_service.py).
+* **Location:** [`person1_api_discovery/app/inventory_service.py`](../person1_api_discovery/app/inventory_service.py).
 * **Key Responsibilities:**
   * **Dynamic URL Normalization:** Converts dynamic URLs (`/api/v2/accounts/1004/statement`) into standardized templates (`/api/v2/accounts/{id}/statement`).
   * **OpenAPI Spec Drift Reconciliation:** Compares observed endpoints against governed OpenAPI specifications (`specs/openapi_partial.json` and `frontend/bharatpay/spec/openapi.json`).
@@ -135,12 +135,12 @@ sequenceDiagram
   * **Auto-Swagger Synthesizer:** Inspects raw request/response schemas from live shadow endpoints and generates compliant OpenAPI 3.1 JSON definitions with 1 click.
 
 ### Component 4: AI & Mathematical Detection Engine (Person 2)
-* **Location:** `traffic-detection-engine/` & [`person1_api_discovery/app/person2_bridge.py`](file:///C:/Users/vaidz/perimeter/person1_api_discovery/app/person2_bridge.py).
+* **Location:** `traffic-detection-engine/` & [`person1_api_discovery/app/person2_bridge.py`](../person1_api_discovery/app/person2_bridge.py).
 * **Architecture (Modular Subsystems):**
   * **Box A (URL Parameterizer & PII Classifier):** Clusters high-cardinality URI paths into parameterized route templates using entropy thresholds and token classification. Integrates Verhoeff checksum validation for Aadhaar and regex matching for PAN, VPAs, and tokens.
   * **Box B (Statistical Anomaly Profiler):** Uses **Welford's algorithm** for numerically stable online computation of mean and variance across request rates, payload sizes, and latency. Detects velocity spikes and horizontal enumeration sweeps without needing historical batch training.
   * **Context-Aware Session Graphing Engine:** Constructs stateful Directed Behavioral Graphs (DAGs) per session to detect skip-step business flow violations (`OWASP API6:2023`) and high-entropy random-walk reconnaissance scans. Exposes graph topology (nodes and edges) for SOC visualization via `/api/session-graph/{session_id}`.
-  * **Box C (Explainable Risk Scorer & OWASP Taxonomy):** Tracks sliding-window session risk ($0 - 100$) with a multi-factor reason vector mapped directly to native **OWASP API Security Top 10 (2023)** categories (`API1: BOLA`, `API2: Broken Auth`, `API4: Unrestricted Resource`, `API6: Business Flow`, `API9: Inventory`). Maintains verified performance (**94.7% TPR, 0.0% FPR**).
+  * **Box C (Explainable Risk Scorer & OWASP Taxonomy):** Tracks sliding-window session risk ($0 - 100$) with a multi-factor reason vector mapped directly to native **OWASP API Security Top 10 (2023)** categories (`API1: BOLA`, `API2: Broken Auth`, `API4: Unrestricted Resource`, `API6: Business Flow`, `API9: Inventory`). Evaluates real-time actor risk with a verified baseline on synthetic simulation testbeds (94.4% TPR, 0.0% FPR in tests/test_e2e_simulation.py).
   * **Poisson Process Threat Simulator (`simulator.py`):** Standalone mathematically grounded threat generator simulating multi-vector attacks and benign user traffic with Poisson arrival intervals ($\Delta t \sim \text{Exp}(\lambda)$) executing at over 11,000 req/sec with sub-0.1ms latency.
 
 ### Component 5: SOC Command Center Dashboard
