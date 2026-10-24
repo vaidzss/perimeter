@@ -179,6 +179,13 @@ perimeter/
 │   ├── session_graphing.md        # Stateful behavioral DAG mechanics and anomaly checks
 │   ├── identity_access.md         # RBAC scopes, role norms, operational policies
 │   ├── api_reference.md           # Gateway control plane and telemetry API reference
+│   ├── pitch_deck.md              # 10-slide executive & technical slide presentation
+│   ├── assets.md                  # Dashboard screenshots, visual assets, and media index
+│   ├── architecture/              # In-flight data flow and telemetry wire schema
+│   ├── development/               # Multi-service setup, SOC console design, and Vite notes
+│   ├── security/                  # Threat model, STRIDE analysis, and risk mitigations
+│   ├── simulation/                # Red-team attack scripts and synthetic vulnerability registry
+│   ├── testing/                   # Test suite specifications, fixtures, and coverage metrics
 │   └── images/                    # Architectural diagrams and telemetry visual assets
 ├── person1_api_discovery/         # Core Perimeter Security Gateway & Discovery Platform
 │   ├── app/

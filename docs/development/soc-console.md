@@ -46,8 +46,8 @@ Perimeter detects the #1 OWASP API vulnerability—**Broken Object Level Authori
    - **Actor Global Blast Radius & Lateral Activity:** Comprehensive audit trail of every other microservice probed or exploited by this actor during the session.
 
 7. **Deliverables in Dashboard & Project:**
-   - **Interactive Pitch Deck (`/pitch`):** Full 10-slide investor & judge presentation inside the dashboard (also formatted in [PITCH_DECK.md](PITCH_DECK.md)).
-   - **5-Minute Live-Attack Demo Script (`/demo`):** Director's cue sheet with exact minute-by-minute talking points, clickable demo triggers, and backup terminal commands (also formatted in [LIVE_ATTACK_DEMO_SCRIPT.md](LIVE_ATTACK_DEMO_SCRIPT.md)).
+   - **Interactive Pitch Deck (`/pitch`):** Full 10-slide investor & judge presentation inside the dashboard (also formatted in [PITCH_DECK.md](../pitch_deck.md)).
+   - **5-Minute Live-Attack Demo Script (`/demo`):** Director's cue sheet with exact minute-by-minute talking points, clickable demo triggers, and backup terminal commands (also formatted in [LIVE_ATTACK_DEMO_SCRIPT.md](../simulation/live-attack-demo-script.md)).
 
 ---
 
@@ -93,9 +93,9 @@ The dashboard features an instant toggle in the top navbar:
 
 ## 📂 Project Structure
 ```
-D:\CYBERCUP PROJECT\
-├── PITCH_DECK.md                  # Executive Pitch Deck Presentation
-├── LIVE_ATTACK_DEMO_SCRIPT.md     # 5-Minute Live-Fire Attack Demo Script
+frontend/
+├── docs/pitch_deck.md             # Executive Pitch Deck Presentation
+├── docs/simulation/live-attack-demo-script.md # Live-Fire Attack Demo Script
 ├── README.md                      # Platform Documentation
 ├── backend/                       # Real Express REST API Server
 │   ├── server.js                  # REST Endpoints, Simulation Engine, In-memory DB

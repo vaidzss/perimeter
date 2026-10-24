@@ -25,9 +25,9 @@ BharatPay represents a modern Indian fintech application designed with calm, aut
   ├── spec/
   │   ├── openapi.json  # Intentionally partial OpenAPI spec (4 public routes only)
   │   ├── sample_logs.jsonl # 200+ real labeled logs (benign + all 3 attack scenarios)
-  │   └── schema.md     # Complete JSON telemetry schema documentation
+  │   └── (Schema documentation: see docs/architecture/telemetry-schema.md)
   ├── docker-compose.yml# Multi-service stack (Nginx + Backend + Frontend + Logs)
-  ├── VULNERABILITIES.md# Ground truth flaw registry (CVSS scores, mechanics, IOCs)
+  ├── (Vulnerability registry: see docs/simulation/vulnerabilities.md)
   ├── smoke_test.py     # End-to-end automated verification script
   ├── run.sh / run.ps1  # Local development launchers (Linux / Windows)
   └── README.md
